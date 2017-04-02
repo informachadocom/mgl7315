@@ -1,0 +1,17 @@
+﻿@model URent.Models.Model.Client
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Login</h2>
+
+@if (Model != null)
+{
+    <div>User: @Model.Name</div>
+}
+else
+{
+    <div>Authentification failed</div>
+}

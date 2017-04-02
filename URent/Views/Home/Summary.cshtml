@@ -1,0 +1,13 @@
+﻿@model URent.Models.Model.Order
+
+@{
+    ViewBag.Title = "Summary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="form-group">
+    <div class="col-md-10">Departure Date: @Model.DateDeparture</div>
+    <div class="col-md-10">Return Date: @Model.DateReturn</div>
+</div>

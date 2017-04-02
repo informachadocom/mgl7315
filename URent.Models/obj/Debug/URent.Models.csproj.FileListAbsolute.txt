@@ -1,0 +1,7 @@
+C:\Users\muranama\Documents\Visual Studio 2015\Projects\URent\URent.Models\bin\Debug\URent.Models.dll
+C:\Users\muranama\Documents\Visual Studio 2015\Projects\URent\URent.Models\bin\Debug\URent.Models.pdb
+C:\Users\muranama\Documents\Visual Studio 2015\Projects\URent\URent.Models\bin\Debug\Newtonsoft.Json.dll
+C:\Users\muranama\Documents\Visual Studio 2015\Projects\URent\URent.Models\bin\Debug\Newtonsoft.Json.xml
+C:\Users\muranama\Documents\Visual Studio 2015\Projects\URent\URent.Models\obj\Debug\URent.Models.dll
+C:\Users\muranama\Documents\Visual Studio 2015\Projects\URent\URent.Models\obj\Debug\URent.Models.pdb
+C:\Users\muranama\Documents\Visual Studio 2015\Projects\URent\URent.Models\obj\Debug\URent.Models.csprojResolveAssemblyReference.cache

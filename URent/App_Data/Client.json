@@ -1,0 +1,42 @@
+[
+  {
+    "ClientId": 1,
+    "Surname": "ricardo",
+    "FirstName": "Ricardo",
+    "Email": "ricardo@gmail.com",
+    "Password": "1324",
+    "ConfirmPassword": null
+  },
+  {
+    "ClientId": 2,
+    "Surname": "fred",
+    "FirstName": "Frederic",
+    "Email": "fred@gmail.com",
+    "Password": "1324",
+    "ConfirmPassword": null
+  },
+  {
+    "ClientId": 3,
+    "Surname": "marcos",
+    "FirstName": "Marcos",
+    "Email": "marcos@gmail.com",
+    "Password": "1324",
+    "ConfirmPassword": null
+  },
+  {
+    "ClientId": 4,
+    "Surname": "youssef",
+    "FirstName": "Youssef",
+    "Email": "youssef@gmail.com",
+    "Password": "1324",
+    "ConfirmPassword": null
+  },
+  {
+    "ClientId": 5,
+    "Surname": "test",
+    "FirstName": "test",
+    "Email": "test@test.com",
+    "Password": "1234",
+    "ConfirmPassword": "1234"
+  }
+]
