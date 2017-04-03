@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace URent.Models.Model
 {
@@ -30,9 +31,10 @@ namespace URent.Models.Model
         public string Password { get; set; }
 
         //[Required]
-        [Display(Name = "Confirm Password")]
-        [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        //[NotMapped]
+        //[Display(Name = "Confirm Password")]
+        //[DataType(DataType.Password)]
+        //[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        //public string ConfirmPassword { get; set; }
     }
 }

@@ -39,32 +39,24 @@ namespace URent.Controllers
         }
 
         //
-        // GET: /Account/Register
-        [AllowAnonymous]
-        public ActionResult Manage()
-        {
-            //Session["ClientId"] = 5;
-            if (ClientId > 0)
-            {
-                var model = client.ListClient(ClientId);
-                return View(model);
-            }
-            return View();
-        }
-
-        //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(Client model)
+        public ActionResult Register(ClientViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = client.CreateUpdate(model);
+                var modelClient = new Client();
+                modelClient.ClientId = model.ClientId;
+                modelClient.FirstName = model.FirstName;
+                modelClient.Surname = model.Surname;
+                modelClient.Email = model.Email;
+                modelClient.Password = model.Password;
+                var result = client.CreateUpdate(modelClient);
                 if (result)
                 {
-                    LoadSession(model);
+                    LoadSession(modelClient);
                     if (TempData["Redirect"] != null)
                     {
                         return RedirectToAction("Summary", "Home");
@@ -82,18 +74,41 @@ namespace URent.Controllers
         }
 
         //
+        // GET: /Account/Manage
+        [AllowAnonymous]
+        public ActionResult Manage()
+        {
+            Session["ClientId"] = 5;
+            if (ClientId > 0)
+            {
+                var modelClient = client.ListClient(ClientId);
+                var model = new UpdateClientViewModel();
+                model.ClientId = modelClient.ClientId;
+                model.FirstName = modelClient.FirstName;
+                model.Surname = modelClient.Surname;
+                model.Email = modelClient.Email;
+                return View(model);
+            }
+            return View();
+        }
+
+        //
         // POST: /Account/Manage
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Manage(Client model)
+        public ActionResult Manage(UpdateClientViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = client.CreateUpdate(model);
+                var modelClient = client.ListClient(model.ClientId);
+                modelClient.FirstName = model.FirstName;
+                modelClient.Surname = model.Surname;
+                modelClient.Email = model.Email;
+                var result = client.CreateUpdate(modelClient);
                 if (result)
                 {
-                    LoadSession(model);
+                    LoadSession(modelClient);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors("Error");
@@ -101,6 +116,25 @@ namespace URent.Controllers
 
             // Something failed, redisplay form
             return View(model);
+        }
+
+        //
+        // POST: /Account/Delete
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(UpdateClientViewModel model)
+        {
+            if (model.ClientId > 0)
+            {
+                var result = client.Remove(model.ClientId);
+                if (result)
+                {
+                    Session.Clear();
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return View("Manage");
         }
 
         public ActionResult Login()
