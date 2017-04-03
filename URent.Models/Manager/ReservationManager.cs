@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using URent.Models.Interfaces;
 using URent.Models.Util;
+using URent.Models.Model;
 
 namespace URent.Models.Manager
 {
@@ -23,20 +24,20 @@ namespace URent.Models.Manager
         {
             try
             {
-                var list = new List<Model.Reservation>();
+                var list = new List<Reservation>();
                 var objOption = new OptionManager();
-                var listOption = new List<Model.Option>();
+                var listOption = new List<Option>();
                 var option = objOption.ListOption(1);
                 listOption.Add(option);
-                var reservation = new Model.Reservation { ReservationId = 1, ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption };
+                var reservation = new Reservation { ReservationId = 1, ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption };
                 list.Add(reservation);
 
-                listOption = new List<Model.Option>();
+                listOption = new List<Option>();
                 option = objOption.ListOption(1);
                 listOption.Add(option);
                 option = objOption.ListOption(2);
                 listOption.Add(option);
-                reservation = new Model.Reservation { ReservationId = 2, ClientId = 2, CarId = 2, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption };
+                reservation = new Reservation { ReservationId = 2, ClientId = 2, CarId = 2, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption };
                 list.Add(reservation);
                 var json = JsonConvert.SerializeObject(list);
                 Helper.CreateJson("Reservation", json);
@@ -53,7 +54,7 @@ namespace URent.Models.Manager
         /// Description: Cette fonction génère un fichier Json avec des la liste des objets de reservation
         /// </summary>
         /// <param name="reservations">Liste de reservation</param>
-        private void Generate(List<Model.Reservation> reservations)
+        private void Generate(List<Reservation> reservations)
         {
             var json = JsonConvert.SerializeObject(reservations);
             Helper.CreateJson("Reservation", json);
@@ -64,7 +65,7 @@ namespace URent.Models.Manager
         /// Description: Cette fonction lit le fichier Json avec les données des reservations enregistrées
         /// </summary>
         /// <returns>Retourne une liste des reservations</returns>
-        private IList<Model.Reservation> ReadReservation()
+        private IList<Reservation> ReadReservation()
         {
             var list = JsonConvert.DeserializeObject<List<Model.Reservation>>(Helper.ReadJson("Reservation"));
 
@@ -76,7 +77,7 @@ namespace URent.Models.Manager
         /// Description: Cette fonction retourne une liste complète des reservations
         /// </summary>
         /// <returns>Retourne une liste des reservations</returns>
-        public IList<Model.Reservation> ListReservations()
+        public IList<Reservation> ListReservations()
         {
             return ReadReservation();
         }
@@ -87,11 +88,11 @@ namespace URent.Models.Manager
         /// </summary>
         /// <param name="reservation">Objet de reservation à créer/modifier</param>
         /// <returns>Retourne true si la création/modification est faite avec succès / Sinon retourne false</returns>
-        public bool CreateUpdate(Model.Reservation reservation)
+        public Reservation CreateUpdate(Reservation reservation)
         {
             try
             {
-                var list = (List<Model.Reservation>)ReadReservation();
+                var list = (List<Reservation>)ReadReservation();
                 if (reservation.ReservationId > 0)
                 {
                     //Remove reservation to edit
@@ -100,15 +101,22 @@ namespace URent.Models.Manager
                 else
                 {
                     //If new reservation, we add the max ReservationId + 1
-                    reservation.ReservationId = list.Max(u => u.ReservationId) + 1;
+                    if (list.Count > 0)
+                    {
+                        reservation.ReservationId = list.Max(u => u.ReservationId) + 1;
+                    }
+                    else
+                    {
+                        reservation.ReservationId = 1;
+                    }
                 }
                 list.Add(reservation);
                 Generate(list);
-                return true;
+                return reservation;
             }
             catch (Exception e)
             {
-                return false;
+                return null;
             }
         }
 

@@ -12,6 +12,8 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.DateDeparture)
     @Html.HiddenFor(m => m.DateReturn)
+    @Html.HiddenFor(m => m.TimeDeparture)
+    @Html.HiddenFor(m => m.TimeReturn)
     <div class="form-group">
         @Html.LabelFor(m => m.ListCategory, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">

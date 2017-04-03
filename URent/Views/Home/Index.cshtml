@@ -14,27 +14,33 @@
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-group">
         @Html.LabelFor(m => m.DateDeparture, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.DateDeparture, new { @class = "form-control" })
+        <div class="col-md-2">
+            @Html.TextBoxFor(m => m.DateDeparture, new { @class = "form-control", @style = "width:100px" })
+        </div>
+        <div class="col-md-4">
+            @Html.DropDownListFor(m => m.TimeDeparture, new SelectList(Model.ListTimeDeparture))
         </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.DateReturn, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.DateReturn, new { @class = "form-control" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateReturn, new { @class = "col-md-2 control-label" })
+            <div class="col-md-2">
+                @Html.TextBoxFor(m => m.DateReturn, new { @class = "form-control", @style = "width:100px" })
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.TimeReturn, new SelectList(Model.ListTimeReturn))
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.ListCategory, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.ListCategory, "CategoryId", "Name"))
+        <div class="form-group">
+            @Html.LabelFor(m => m.ListCategory, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.ListCategory, "CategoryId", "Name"))
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Search" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" class="btn btn-default" value="Search" />
+            </div>
         </div>
-    </div>
 }
 
 @section Scripts {

@@ -22,7 +22,6 @@ namespace URent.Controllers
         public ActionResult Index()
         {
             return View();
-
         }
 
         //
@@ -119,12 +118,12 @@ namespace URent.Controllers
         {
             var modelClient = new Client { Email = model.Email, Password = model.Password };
             var result = client.Authentification(modelClient);
-            if (result.ClientId > 0)
+            if (result != null && result.ClientId > 0)
             {
                 LoadSession(result);
-                if (TempData["Redirect"] != null)
+                if (TempData["Redirect"] != null && TempData["Redirect"].ToString() == "Summary")
                 {
-                    return Redirect(TempData["Redirect"].ToString());
+                    return View("../Home/Summary", (Order)Session["order"]);
                 }
                 else
                 {

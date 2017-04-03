@@ -17,12 +17,14 @@ namespace URent.Tests.Controllers
         private readonly ISearch search;
         private readonly IOption option;
         private readonly IClient client;
+        private readonly IRentPrice price;
+        private readonly IReservation reservation;
 
         [TestMethod]
         public void Index()
         {
             // Arrange
-            HomeController controller = new HomeController(category, search, option, client);
+            HomeController controller = new HomeController(category, search, option, client, price, reservation);
 
             // Act
             ViewResult result = controller.Index() as ViewResult;

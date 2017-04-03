@@ -90,9 +90,9 @@ namespace URent.Models.Manager
         /// Description: Cette fonction lit le fichier Json avec les données des prix de location enregistrées
         /// </summary>
         /// <returns>Retourne une liste des prix de location</returns>
-        private IList<Model.RentPrice> ReadRentPrice()
+        private IList<RentPrice> ReadRentPrice()
         {
-            return JsonConvert.DeserializeObject<List<Model.RentPrice>>(Helper.ReadJson("RentPrice"));
+            return JsonConvert.DeserializeObject<List<RentPrice>>(Helper.ReadJson("RentPrice"));
         }
 
         /// <summary>
@@ -124,19 +124,19 @@ namespace URent.Models.Manager
         /// <param name="departureDate">Date de sortie</param>
         /// <param name="returnDate">Date de retour</param>
         /// <returns>Retourne une liste de catégories avec les prix calculés</returns>
-        public IList<Model.Order> CalculatePriceSearch(IList<Model.Category> categories, DateTime departureDate, DateTime returnDate)
+        public IList<Order> CalculatePriceSearch(IList<Category> categories, DateTime departureDate, DateTime returnDate)
         {
-            var list = new List<Model.Order>();
+            var list = new List<Order>();
 
             foreach (var c in categories)
             {
                 decimal total = 0;
-                var objOrder = new Model.Order();
-                var listPrice = new List<Model.OrderPrice>();
-                objOrder.CategoryId = c.CategoryId;
+                var objOrder = new Order();
+                var listPrice = new List<OrderPrice>();
+                objOrder.Category = c;
                 for (var currentDate = departureDate; currentDate <= returnDate; currentDate = currentDate.AddDays(1))
                 {
-                    var objPrice = new Model.OrderPrice();
+                    var objPrice = new OrderPrice();
                     var price = GetPrice(currentDate, c.CategoryId);
                     total += price;
                     objPrice.Price = price;
@@ -160,7 +160,7 @@ namespace URent.Models.Manager
         /// </summary>
         /// <param name="orderPrice">Liste avec items choisis</param>
         /// <returns>Retourne la liste avec les totals calculés</returns>
-        public IList<Model.Order> RecalculatePriceSearch(IList<Model.Order> orderPrice)
+        public IList<Order> RecalculatePriceSearch(IList<Order> orderPrice)
         {
             if (orderPrice != null)
             {

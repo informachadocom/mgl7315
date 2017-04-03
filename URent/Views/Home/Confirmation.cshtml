@@ -1,0 +1,18 @@
+﻿@model URent.Models.Model.Reservation
+
+@{
+    ViewBag.Title = "Confirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+<div class="row">
+    <div class="col-md-4 alert-success">
+        <b>Hi @Session["Name"],</b><br /> your reservation is confirmed.<br />
+        This is your reservation ID: <b>@Model.ReservationId</b><br />Please, present this ID number for the agent in the agency.
+        <br /><br />
+        Thank you for your preference.
+        <br />U-Rent
+    </div>
+</div>

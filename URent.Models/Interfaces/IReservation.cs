@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using URent.Models.Model;
 
 namespace URent.Models.Interfaces
 {
@@ -10,7 +11,7 @@ namespace URent.Models.Interfaces
     public interface IReservation
     {
         bool Generate();
-        IList<Model.Reservation> ListReservations();
-        bool CreateUpdate(Model.Reservation reservation);
+        IList<Reservation> ListReservations();
+        Reservation CreateUpdate(Reservation reservation);
     }
 }
