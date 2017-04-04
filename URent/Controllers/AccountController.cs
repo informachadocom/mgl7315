@@ -47,26 +47,36 @@ namespace URent.Controllers
         {
             if (ModelState.IsValid)
             {
-                var modelClient = new Client();
-                modelClient.ClientId = model.ClientId;
-                modelClient.FirstName = model.FirstName;
-                modelClient.Surname = model.Surname;
-                modelClient.Email = model.Email;
-                modelClient.Password = model.Password;
-                var result = client.CreateUpdate(modelClient);
-                if (result)
+                //Check email already exists
+                var emailExist = client.CheckAvailableEmail(0, model.Email);
+
+                if (!emailExist)
                 {
-                    LoadSession(modelClient);
-                    if (TempData["Redirect"] != null)
+                    var modelClient = new Client();
+                    modelClient.ClientId = model.ClientId;
+                    modelClient.FirstName = model.FirstName;
+                    modelClient.Surname = model.Surname;
+                    modelClient.Email = model.Email;
+                    modelClient.Password = model.Password;
+                    var result = client.CreateUpdate(modelClient);
+                    if (result)
                     {
-                        return RedirectToAction("Summary", "Home");
+                        LoadSession(modelClient);
+                        if (TempData["Redirect"] != null)
+                        {
+                            return RedirectToAction("Summary", "Home");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                    AddErrors("Error");
                 }
-                AddErrors("Error");
+                else
+                {
+                    AddErrors("This email already exists.");
+                }
             }
 
             // Something failed, redisplay form
@@ -101,17 +111,28 @@ namespace URent.Controllers
         {
             if (ModelState.IsValid)
             {
-                var modelClient = client.ListClient(model.ClientId);
-                modelClient.FirstName = model.FirstName;
-                modelClient.Surname = model.Surname;
-                modelClient.Email = model.Email;
-                var result = client.CreateUpdate(modelClient);
-                if (result)
+                //Check email already exists
+                var emailExist = client.CheckAvailableEmail(ClientId, model.Email);
+
+                if (!emailExist)
                 {
-                    LoadSession(modelClient);
-                    return RedirectToAction("Index", "Home");
+
+                    var modelClient = client.ListClient(model.ClientId);
+                    modelClient.FirstName = model.FirstName;
+                    modelClient.Surname = model.Surname;
+                    modelClient.Email = model.Email;
+                    var result = client.CreateUpdate(modelClient);
+                    if (result)
+                    {
+                        LoadSession(modelClient);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    AddErrors("Error");
                 }
-                AddErrors("Error");
+                else
+                {
+                    AddErrors("This email already exists.");
+                }
             }
 
             // Something failed, redisplay form

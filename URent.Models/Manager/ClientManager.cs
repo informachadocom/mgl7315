@@ -172,5 +172,17 @@ namespace URent.Models.Manager
         {
             return HttpContext.Current.Session["ClientId"] != null;
         }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction check if the email already exists
+        /// </summary>
+        /// <returns>Return true if the email exists / False not exists</returns>
+        public bool CheckAvailableEmail(int clientId, string email)
+        {
+            var list = ReadClient();
+            var id = list.Where(c => c.Email == email).Select(c => c.ClientId).FirstOrDefault();
+            return !(id == 0 || id == clientId);
+        }
     }
 }
