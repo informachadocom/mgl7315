@@ -1,7 +1,7 @@
 ﻿@model URent.Models.UpdateClientViewModel
 
 @{
-    ViewBag.Title = "User account";
+    ViewBag.Title = "Edit - User account";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -14,8 +14,6 @@
     {
         @Html.HiddenFor(m => m.ClientId)
     }
-    <h4>Create a new account.</h4>
-    <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-group">
         @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })

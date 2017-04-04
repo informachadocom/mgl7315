@@ -55,6 +55,7 @@ namespace URent.Controllers
                 model.ListOption = listOptions;
                 model.DateDeparture = DateTime.Parse((DateTime.Parse(model.DateDeparture.ToString()).ToShortDateString()));
                 model.DateReturn = DateTime.Parse((DateTime.Parse(model.DateReturn.ToString()).ToShortDateString()));
+                //return RedirectToAction("Result", model);
                 return View("Result", model);
             }
             return View();
@@ -62,16 +63,20 @@ namespace URent.Controllers
 
         //
         // GET: /Home/Result
-        public ActionResult Result()
+        public ActionResult Result(SearchViewModel model)
         {
-            return View();
+            if (model == null || model.DateDeparture == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View(model);
         }
 
         //POST: /Home/Result
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Result(SearchViewModel model)
+        public ActionResult ResultPost(SearchViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -97,11 +102,18 @@ namespace URent.Controllers
         // GET: /Home/Summary
         public ActionResult Summary()
         {
-            if (!client.isAuthenticated())
+            if (Session["order"] != null)
             {
-                TempData["Message"] = "To continue you have to login or register a new client.";
-                TempData["Redirect"] = "Summary";
-                return RedirectToAction("Login", "Account");
+                if (!client.isAuthenticated())
+                {
+                    TempData["Message"] = "To continue you have to login or register a new client.";
+                    TempData["Redirect"] = "Summary";
+                    return RedirectToAction("Login", "Account");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
             }
             return View();
         }
@@ -110,6 +122,10 @@ namespace URent.Controllers
         // GET: /Home/Reservation
         public ActionResult Reservation()
         {
+            if (Session["Order"] == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -139,6 +155,7 @@ namespace URent.Controllers
                         var resultReservation = reservation.CreateUpdate(reserv);
                         if (resultReservation != null && resultReservation.ReservationId > 0)
                         {
+                            ViewBag.Reservation = true;
                             return View("Confirmation", reserv);
                         }
                         else
@@ -166,14 +183,21 @@ namespace URent.Controllers
 
         public ActionResult Confirmation(Reservation model)
         {
-            if (client.isAuthenticated())
+            if (ViewBag.Reservation != null && ViewBag.Reservation == true)
             {
-                Session["order"] = null;
-                return View(model);
+                if (client.isAuthenticated())
+                {
+                    Session["order"] = null;
+                    return View(model);
+                }
+                else
+                {
+                    return View("Index");
+                }
             }
             else
             {
-                return View("Index");
+                return RedirectToAction("Index", "Home");
             }
         }
 

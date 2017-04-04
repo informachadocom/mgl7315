@@ -32,8 +32,7 @@ namespace URent.Controllers
             //Session["ClientId"] = 5;
             if (ClientId > 0)
             {
-                var model = client.ListClient(ClientId);
-                return View(model);
+                return RedirectToAction("Manage");
             }
             return View();
         }
@@ -88,7 +87,7 @@ namespace URent.Controllers
         [AllowAnonymous]
         public ActionResult Manage()
         {
-            Session["ClientId"] = 5;
+            //Session["ClientId"] = 5;
             if (ClientId > 0)
             {
                 var modelClient = client.ListClient(ClientId);
@@ -98,6 +97,10 @@ namespace URent.Controllers
                 model.Surname = modelClient.Surname;
                 model.Email = modelClient.Email;
                 return View(model);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
             }
             return View();
         }
@@ -168,7 +171,7 @@ namespace URent.Controllers
             {
                 return View();
             }
-            return RedirectToAction("../Home/Index");
+            return RedirectToAction("Index", "Home");
         }
 
         //
