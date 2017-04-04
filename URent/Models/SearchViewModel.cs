@@ -5,6 +5,11 @@ using URent.Models.Model;
 
 namespace URent.Models
 {
+    /// <summary>
+    /// Auteur: Marcos Muranaka
+    /// Date: 01/04/2017
+    /// Description: Propriétés de la recherche
+    /// </summary>
     public class SearchViewModel
     {
         [Required]

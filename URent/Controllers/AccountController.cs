@@ -137,6 +137,61 @@ namespace URent.Controllers
             return View("Manage");
         }
 
+        //
+        // GET: /Account/ChangePassword
+        [AllowAnonymous]
+        public ActionResult ChangePassword()
+        {
+            //Session["ClientId"] = 5;
+            if (ClientId > 0)
+            {
+                return View();
+            }
+            return RedirectToAction("../Home/Index");
+        }
+
+        //
+        // POST: /Account/ChangePassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //Load client
+                var modelClient = client.ListClient(ClientId);
+                modelClient.Password = model.CurrentPassword;
+                //Check if current password is correct
+                var resultAuth = client.Authentification(modelClient);
+                if (resultAuth != null && resultAuth.ClientId > 0)
+                {
+                    modelClient.Password = model.NewPassword;
+                    var result = client.CreateUpdate(modelClient);
+                    if (result)
+                    {
+                        LoadSession(modelClient);
+                        if (TempData["Redirect"] != null)
+                        {
+                            return RedirectToAction("Summary", "Home");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                    }
+                    AddErrors("Error");
+                }
+                else
+                {
+                    AddErrors("Current password does not match!");
+                }
+            }
+
+            // Something failed, redisplay form
+            return View(model);
+        }
+
         public ActionResult Login()
         {
             if (client.isAuthenticated())
