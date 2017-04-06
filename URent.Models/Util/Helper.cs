@@ -44,7 +44,14 @@ namespace URent.Models.Util
         /// <returns>Retourne le chemin du dossier App_Data</returns>
         private static string ReturnPathData()
         {
-            return AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+            try
+            {
+                return AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+            }
+            catch
+            {
+                return System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString() + @"\App_Data";
+            }
         }
     }
 }

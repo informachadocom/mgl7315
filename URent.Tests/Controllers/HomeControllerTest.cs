@@ -7,30 +7,35 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using URent;
 using URent.Controllers;
 using URent.Models.Interfaces;
+using URent.Models.Manager;
+using URent.App_Start;
+using Ninject;
 
 namespace URent.Tests.Controllers
 {
     [TestClass]
     public class HomeControllerTest
     {
-        private readonly ICategory category;
-        private readonly ISearch search;
-        private readonly IOption option;
-        private readonly IClient client;
-        private readonly IRentPrice price;
-        private readonly IReservation reservation;
+        private  ICategory category;
+        private ISearch search;
+        private IOption option;
+        private IClient client;
+        private IRentPrice price;
+        private IReservation reservation;
+
+        [TestInitialize]
+        public void MyTestInitialize()
+        {
+            IKernel kernel = new StandardKernel();
+            category = kernel.Get<CategoryManager>();
+        }
 
         [TestMethod]
-        public void Index()
+        public void ListAllCategories()
         {
-            // Arrange
-            HomeController controller = new HomeController(category, search, option, client, price, reservation);
-
-            // Act
-            ViewResult result = controller.Index() as ViewResult;
-
-            // Assert
-            Assert.IsNotNull(result);
+            //var category = new CategoryManager();
+            var list = category.ListCategories();
+            Assert.IsTrue(list.Count > 0);
         }
     }
 }
