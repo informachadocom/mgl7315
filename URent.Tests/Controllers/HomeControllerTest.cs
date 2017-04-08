@@ -17,7 +17,8 @@ namespace URent.Tests.Controllers
     [TestClass]
     public class HomeControllerTest
     {
-        private  ICategory category;
+        private ICategory category;
+        private ICar car;
         private ISearch search;
         private IOption option;
         private IClient client;
@@ -29,8 +30,19 @@ namespace URent.Tests.Controllers
         {
             IKernel kernel = new StandardKernel();
             category = kernel.Get<CategoryManager>();
+            car = kernel.Get<CarManager>();
             option = kernel.Get<OptionManager>();
             client = kernel.Get<ClientManager>();
+            search = kernel.Get<SearchManager>();
+            price = kernel.Get<RentPriceManager>();
+            reservation = kernel.Get<ReservationManager>();
+        }
+
+        [TestMethod]
+        public void GenerateDataCategory()
+        {
+            var result = category.Generate();
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
@@ -38,6 +50,27 @@ namespace URent.Tests.Controllers
         {
             var result = client.Generate();
             Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GenerateDataCar()
+        {
+            var result = car.Generate();
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void ListAllCategories()
+        {
+            var list = category.ListCategories();
+            Assert.IsTrue(list.Count > 0);
+        }
+
+        [TestMethod]
+        public void ListCategoryById()
+        {
+            var obj = category.ListCategory(1);
+            Assert.IsTrue(obj.CategoryId == 1 && obj.Name.ToUpper() == "COMPACT");
         }
 
         [TestMethod]
@@ -67,7 +100,7 @@ namespace URent.Tests.Controllers
         }
 
         [TestMethod]
-        public void CorrectAuthentificationUser()
+        public void SuccessfulAuthentificationClient()
         {
             var model = new Client();
             model.Email = "test2@email.com";
@@ -75,5 +108,23 @@ namespace URent.Tests.Controllers
             var result = client.Authentification(model);
             Assert.IsTrue(result.GetType() == typeof(Client) && result.ClientId == 5);
         }
+
+        [TestMethod]
+        public void UnsuccessfulAuthentificationClient()
+        {
+            var model = new Client();
+            model.Email = "noexist@email.com";
+            model.Password = "noexist";
+            var result = client.Authentification(model);
+            Assert.IsTrue(result == null);
+        }
+
+        [TestMethod]
+        public void DeleteClient()
+        {
+            var result = client.Remove(5);
+            Assert.IsTrue(result);
+        }
+
     }
 }

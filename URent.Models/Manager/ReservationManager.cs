@@ -39,6 +39,15 @@ namespace URent.Models.Manager
                 listOption.Add(option);
                 reservation = new Reservation { ReservationId = 2, ClientId = 2, CarId = 2, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption };
                 list.Add(reservation);
+
+                listOption = new List<Option>();
+                option = objOption.ListOption(1);
+                listOption.Add(option);
+                option = objOption.ListOption(2);
+                listOption.Add(option);
+                reservation = new Reservation { ReservationId = 3, ClientId = 2, CarId = 3, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption };
+                list.Add(reservation);
+
                 var json = JsonConvert.SerializeObject(list);
                 Helper.CreateJson("Reservation", json);
                 return true;
