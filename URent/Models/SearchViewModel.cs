@@ -28,5 +28,9 @@ namespace URent.Models
         public IList<Option> ListOption { get; set; }
         public int CategoryId { get; set; }
         public int[] SelectedOptions { get; set; }
+        [Display(Name = "Client")]
+        public IList<Client> ListClient { get; set; }
+        public int ClientId { get; set; }
+        public int ReservationId { get; set; }
     }
 }

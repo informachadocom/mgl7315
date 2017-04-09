@@ -1,1 +1,22 @@
-[{"CarId":1,"Name":"Civic","CategoryId":1},{"CarId":2,"Name":"Corolla","CategoryId":1},{"CarId":3,"Name":"Edge","CategoryId":2},{"CarId":4,"Name":"Fiesta","CategoryId":3}]
+[
+  {
+    "CarId": 1,
+    "Name": "Civic",
+    "CategoryId": 1
+  },
+  {
+    "CarId": 2,
+    "Name": "Corolla",
+    "CategoryId": 1
+  },
+  {
+    "CarId": 3,
+    "Name": "Edge",
+    "CategoryId": 2
+  },
+  {
+    "CarId": 4,
+    "Name": "Fiesta",
+    "CategoryId": 3
+  }
+]

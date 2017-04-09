@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using URent;
-using URent.Controllers;
 using URent.Models.Interfaces;
 using URent.Models.Manager;
-using URent.App_Start;
 using Ninject;
 using URent.Models.Model;
 
@@ -24,6 +19,7 @@ namespace URent.Tests.Controllers
         private IClient client;
         private IRentPrice price;
         private IReservation reservation;
+        private IUser user;
 
         [TestInitialize]
         public void MyTestInitialize()
@@ -36,12 +32,20 @@ namespace URent.Tests.Controllers
             search = kernel.Get<SearchManager>();
             price = kernel.Get<RentPriceManager>();
             reservation = kernel.Get<ReservationManager>();
+            user = kernel.Get<UserManager>();
         }
 
         [TestMethod]
         public void GenerateDataCategory()
         {
             var result = category.Generate();
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GenerateDataOption()
+        {
+            var result = option.Generate();
             Assert.IsTrue(result);
         }
 
@@ -60,6 +64,27 @@ namespace URent.Tests.Controllers
         }
 
         [TestMethod]
+        public void GenerateDataPrice()
+        {
+            var result = price.Generate();
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GenerateDataReservation()
+        {
+            var result = reservation.Generate();
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void GenerateDataUserAdmin()
+        {
+            var result = user.Generate();
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
         public void ListAllCategories()
         {
             var list = category.ListCategories();
@@ -71,6 +96,13 @@ namespace URent.Tests.Controllers
         {
             var obj = category.ListCategory(1);
             Assert.IsTrue(obj.CategoryId == 1 && obj.Name.ToUpper() == "COMPACT");
+        }
+
+        [TestMethod]
+        public void ListAllOptions()
+        {
+            var list = option.ListOptions();
+            Assert.IsTrue(list.Count > 0);
         }
 
         [TestMethod]
@@ -126,5 +158,57 @@ namespace URent.Tests.Controllers
             Assert.IsTrue(result);
         }
 
+        [TestMethod]
+        public void ListAllAvailablesCategories()
+        {
+            var date1 = DateTime.Parse("2017-03-30");
+            var date2 = DateTime.Parse("2017-03-30");
+            var result = search.SearchAvailableCategories(date1, date2, 0);
+            Assert.IsTrue(result.Count == 3);
+        }
+
+        [TestMethod]
+        public void ListAvailablesCategoriesWithoutCategory2()
+        {
+            var date1 = DateTime.Parse("2017-04-01");
+            var date2 = DateTime.Parse("2017-04-01");
+            var result = search.SearchAvailableCategories(date1, date2, 0);
+            Assert.IsFalse(result.Any(c => c.Category.CategoryId == 2));
+        }
+
+        [TestMethod]
+        public void CheckIfCategoryIsAvailableTrue()
+        {
+            var date1 = DateTime.Parse("2017-04-01");
+            var date2 = DateTime.Parse("2017-04-01");
+            var result = search.CheckAvailableCategory(date1, date2, 1);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CheckIfCategoryIsAvailableFalse()
+        {
+            var date1 = DateTime.Parse("2017-04-01");
+            var date2 = DateTime.Parse("2017-04-01");
+            var result = search.CheckAvailableCategory(date1, date2, 2);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void CreateReservation()
+        {
+            var listOption = new List<Option> { option.ListOption(1) };
+            var objReservation = new Reservation { ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption };
+
+            var result = reservation.CreateUpdate(objReservation);
+            Assert.IsTrue(result.ReservationId > 0);
+        }
+
+        [TestMethod]
+        public void ListReservationWithoutRent()
+        {
+            var list = reservation.ListReservationsWithNoRent();
+            Assert.IsTrue(list.Count > 0);
+        }
     }
 }

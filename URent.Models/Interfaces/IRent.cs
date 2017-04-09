@@ -11,5 +11,6 @@ namespace URent.Models.Interfaces
     {
         bool Generate();
         bool CreateUpdate(Model.Rent rent);
+        IList<Model.Rent> ListRent();
     }
 }

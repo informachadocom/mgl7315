@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Interfaces\ISearch.cs" />
     <Compile Include="Interfaces\IReservation.cs" />
     <Compile Include="Interfaces\IRentPrice.cs" />
@@ -55,6 +56,8 @@
     <Compile Include="Interfaces\IOption.cs" />
     <Compile Include="Interfaces\ICategory.cs" />
     <Compile Include="Manager\CarManager.cs" />
+    <Compile Include="Manager\UserManager.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="Util\Crypt.cs" />
     <Compile Include="Manager\RentManager.cs" />
     <Compile Include="Manager\RentPriceManager.cs" />

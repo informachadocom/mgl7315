@@ -10,9 +10,10 @@ namespace URent.Models.Model
     /// </summary>
     public class Rent
     {
-        public int RendId { get; set; }
+        public int RentId { get; set; }
         public int ReservationId { get; set; }
         public int ClientId { get; set; }
+        public int UserId { get; set; }
         public int CarId { get; set; }
         public DateTime DateDeparture { get; set; }
         public DateTime DateReturn { get; set; }

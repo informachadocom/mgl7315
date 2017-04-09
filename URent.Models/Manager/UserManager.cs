@@ -10,10 +10,10 @@ namespace URent.Models.Manager
 {
     /// <summary>
     /// Auteur: Marcos Muranaka
-    /// Date: 26/03/2017
-    /// Description: Cette classe est responsable de gérer les usagers
+    /// Date: 09/04/2017
+    /// Description: Cette classe est responsable de gérer les usagers admin
     /// </summary>
-    public class ClientManager : IClient
+    public class UserManager : IUser
     {
         /// <summary>
         /// Auteur: Marcos Muranaka
@@ -24,17 +24,13 @@ namespace URent.Models.Manager
         {
             try
             {
-                var list = new List<Model.Client>();
-                var client = new Model.Client { ClientId = 1, FirstName = "Ricardo", Surname = "ricardo", Password = "1324", Email = "ricardo@gmail.com" };
-                list.Add(client);
-                client = new Model.Client { ClientId = 2, FirstName = "Frederic", Surname = "fred", Password = "1324", Email = "fred@gmail.com" };
-                list.Add(client);
-                client = new Model.Client { ClientId = 3, FirstName = "Marcos", Surname = "marcos", Password = "1324", Email = "marcos@gmail.com" };
-                list.Add(client);
-                client = new Model.Client { ClientId = 4, FirstName = "Youssef", Surname = "youssef", Password = "1324", Email = "youssef@gmail.com" };
-                list.Add(client);
+                var list = new List<Model.User>();
+                var user = new Model.User { UserId = 1, FirstName = "Admin", Surname = "URent", Password = "1234", Email = "admin@admin.com" };
+                list.Add(user);
+                user = new Model.User { UserId = 2, FirstName = "Admin2", Surname = "URent", Password = "1234", Email = "admin2@admin.com" };
+                list.Add(user);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("Client", json);
+                Helper.CreateJson("User", json);
             }
             catch (Exception e)
             {
@@ -48,10 +44,10 @@ namespace URent.Models.Manager
         /// Description: Cette fonction génère un fichier Json avec les usagers
         /// </summary>
         /// <param name="users">Liste d'usagers</param>
-        private void Generate(List<Model.Client> users)
+        private void Generate(List<Model.User> users)
         {
             var json = JsonConvert.SerializeObject(users);
-            Helper.CreateJson("Client", json);
+            Helper.CreateJson("User", json);
         }
 
         /// <summary>
@@ -59,14 +55,14 @@ namespace URent.Models.Manager
         /// Description: Cette fonction lit le fichier Json avec les données des usagers enregistrés
         /// </summary>
         /// <returns>Retourne une liste des usagers</returns>
-        private IList<Model.Client> ReadClient()
+        private IList<Model.User> ReadUser()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.Client>>(Helper.ReadJson("Client"));
+            var list = JsonConvert.DeserializeObject<List<Model.User>>(Helper.ReadJson("User"));
             if (list != null)
             {
                 return list;
             }
-            return new List<Model.Client>();
+            return new List<Model.User>();
         }
 
         /// <summary>
@@ -74,9 +70,9 @@ namespace URent.Models.Manager
         /// Description: Cette fonction lit le fichier Json avec la liste complète des usagers enregistrés
         /// </summary>
         /// <returns>Retourne la liste complète des usagers</returns>
-        public IList<Model.Client> ListClients()
+        public IList<Model.User> ListUsers()
         {
-            return ReadClient();
+            return ReadUser();
         }
 
         /// <summary>
@@ -85,10 +81,10 @@ namespace URent.Models.Manager
         /// </summary>
         /// <param name="id">ID de l'usager</param>
         /// <returns>Retourne l'usager correspondant de l'ID</returns>
-        public Model.Client ListClient(int id)
+        public Model.User ListUser(int id)
         {
-            var list = ReadClient();
-            return list.Where(c => c.ClientId == id).ToList()[0];
+            var list = ReadUser();
+            return list.Where(c => c.UserId == id).ToList()[0];
         }
 
         /// <summary>
@@ -101,8 +97,8 @@ namespace URent.Models.Manager
         {
             try
             {
-                var list = (List<Model.Client>)ReadClient();
-                list.RemoveAll(u => u.ClientId == id);
+                var list = (List<Model.User>)ReadUser();
+                list.RemoveAll(u => u.UserId == id);
                 Generate(list);
                 return true;
             }
@@ -116,31 +112,31 @@ namespace URent.Models.Manager
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction crée un nouvel usager ou modifie un usager existant
         /// </summary>
-        /// <param name="client">Usager à créer ou modifier</param>
+        /// <param name="user">Usager à créer ou modifier</param>
         /// <returns></returns>
-        public bool CreateUpdate(Model.Client client)
+        public bool CreateUpdate(Model.User user)
         {
             try
             {
-                var list = (List<Model.Client>)ReadClient();
-                if (client.ClientId > 0)
+                var list = (List<Model.User>)ReadUser();
+                if (user.UserId > 0)
                 {
-                    //Remove Client to edit
-                    list.RemoveAll(u => u.ClientId == client.ClientId);
+                    //Remove User to edit
+                    list.RemoveAll(u => u.UserId == user.UserId);
                 }
                 else
                 {
-                    //If new Client, we add the max ClientId + 1
+                    //If new User, we add the max UserId + 1
                     if (list.Count > 0)
                     {
-                        client.ClientId = list.Max(u => u.ClientId) + 1;
+                        user.UserId = list.Max(u => u.UserId) + 1;
                     }
                     else
                     {
-                        client.ClientId = 1;
+                        user.UserId = 1;
                     }
                 }
-                list.Add(client);
+                list.Add(user);
                 Generate(list);
                 return true;
             }
@@ -154,23 +150,23 @@ namespace URent.Models.Manager
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction valide l'authentification d'usager
         /// </summary>
-        /// <param name="client">Usager à authentifier</param>
+        /// <param name="user">Usager à authentifier</param>
         /// <returns></returns>
-        public Model.Client Authentification(Model.Client client)
+        public Model.User Authentification(Model.User user)
         {
-            var list = ReadClient();
-            var clientLogin = list.FirstOrDefault(u => u.Email == client.Email && u.Password == client.Password);
-            return clientLogin;
+            var list = ReadUser();
+            var userLogin = list.FirstOrDefault(u => u.Email == user.Email && u.Password == user.Password);
+            return userLogin;
         }
 
         /// <summary>
         /// Auteur: Marcos Muranaka
-        /// Description: Cette fonction check if the client is authenticated
+        /// Description: Cette fonction check if the User (admin) is authenticated
         /// </summary>
-        /// <returns>Return true if client is authenticated / False not authenticated</returns>
+        /// <returns>Return true if user is authenticated / False not authenticated</returns>
         public bool isAuthenticated()
         {
-            return HttpContext.Current.Session["ClientId"] != null;
+            return HttpContext.Current.Session["UserId"] != null;
         }
 
         /// <summary>
@@ -178,11 +174,11 @@ namespace URent.Models.Manager
         /// Description: Cette fonction check if the email already exists
         /// </summary>
         /// <returns>Return true if the email exists / False not exists</returns>
-        public bool CheckAvailableEmail(int clientId, string email)
+        public bool CheckAvailableEmail(int userId, string email)
         {
-            var list = ReadClient();
-            var id = list.Where(c => c.Email == email).Select(c => c.ClientId).FirstOrDefault();
-            return !(id == 0 || id == clientId);
+            var list = ReadUser();
+            var id = list.Where(c => c.Email == email).Select(c => c.UserId).FirstOrDefault();
+            return !(id == 0 || id == userId);
         }
     }
 }

@@ -1,0 +1,39 @@
+﻿@model IList<URent.Models.ReservationViewModel>
+
+@{
+    ViewBag.Title = "Listing reservations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+
+<div class="row">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Reservation Date</th>
+                    <th>Client Name</th>
+                    <th>Departure date</th>
+                    <th>Return date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model)
+                {
+                    <tr>
+                        <td>@obj.ReservationId</td>
+                        <td>@obj.DateReservation.ToShortDateString()</td>
+                        <td>@obj.ClientName</td>
+                        <td>@obj.DateStartRent</td>
+                        <td>@obj.DateReturnRent</td>
+                        <td>@Html.ActionLink("Create rent", "Rent", "AdminHome", new { ReservationId = obj.ReservationId }, null)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

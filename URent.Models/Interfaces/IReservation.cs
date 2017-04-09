@@ -12,6 +12,8 @@ namespace URent.Models.Interfaces
     {
         bool Generate();
         IList<Reservation> ListReservations();
+        Reservation ListReservation(int id);
         Reservation CreateUpdate(Reservation reservation);
+        IList<Reservation> ListReservationsWithNoRent();
     }
 }

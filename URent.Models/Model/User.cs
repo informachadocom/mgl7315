@@ -4,13 +4,13 @@ namespace URent.Models.Model
 {
     /// <summary>
     /// Auteur: Marcos Muranaka
-    /// Date: 26/03/2017
-    /// Description: Propriétés du client (usager)
+    /// Date: 09/04/2017
+    /// Description: Propriétés du usager (admin)
     /// </summary>
-    public class Client
+    public class User
     {
         [Key]
-        public int ClientId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [Display(Name = "Surname")]

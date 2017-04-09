@@ -11,6 +11,7 @@ namespace URent.Models.Interfaces
     {
         bool Generate();
         IList<Model.Car> ListCars();
+        Model.Car ListCar(int id);
         IList<Model.Car> ListCarsByCategory(int id);
     }
 }

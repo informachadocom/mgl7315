@@ -1,0 +1,1 @@
+[{"RentId":1,"ReservationId":1,"ClientId":3,"UserId":1,"CarId":3,"DateDeparture":"2017-04-01T10:00:00","DateReturn":"2017-04-02T11:30:00","Cost":0.0,"Options":[{"OptionId":1,"Name":"GPS","Price":10.0},{"OptionId":2,"Name":"Child seat","Price":12.0}]}]

@@ -71,6 +71,7 @@ namespace URent.App_Start
             kernel.Bind<ISearch>().To<SearchManager>().Named("Prod");
             kernel.Bind<IRentPrice>().To<RentPriceManager>().Named("Prod");
             kernel.Bind<IRent>().To<RentManager>().Named("Prod");
-        }        
+            kernel.Bind<IUser>().To<UserManager>().Named("Prod");
+        }
     }
 }

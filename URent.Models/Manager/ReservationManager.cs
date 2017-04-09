@@ -93,6 +93,38 @@ namespace URent.Models.Manager
 
         /// <summary>
         /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction retourne une reservation par ID
+        /// </summary>
+        /// <param name="id">ID de la reservation</param>
+        /// <returns>Retourne une reservation</returns>
+        public Reservation ListReservation(int id)
+        {
+            var list = ReadReservation().Where(c => c.ReservationId == id).ToList();
+            if (list.Count > 0)
+            {
+                return list[0];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction retourne une liste des reservations qui n'ont pas de location
+        /// </summary>
+        /// <returns>List de reservations</returns>
+        public IList<Reservation> ListReservationsWithNoRent()
+        {
+            var listRes = ReadReservation();
+            var objRent = new RentManager();
+            var listRen = objRent.ListRent();
+            var table = (from r in listRes
+                        where (listRen.Where(re => re.ReservationId == r.ReservationId).Count() <= 0)
+                        select r).ToList();
+            return table;
+        }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
         /// Description: Cette fonction crée/modifie une location
         /// </summary>
         /// <param name="reservation">Objet de reservation à créer/modifier</param>
@@ -128,12 +160,6 @@ namespace URent.Models.Manager
                 return null;
             }
         }
-
-        //public List<Model.Reservation> ListReservation(int id)
-        //{
-        //    var list = ReadReservation();
-        //    return list.Where(c => c.CarId == id).ToList();
-        //}
 
         //public void Remove(Model.Reservation reservation)
         //{

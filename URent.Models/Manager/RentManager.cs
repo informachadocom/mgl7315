@@ -28,7 +28,7 @@ namespace URent.Models.Manager
                 var listOption = new List<Model.Option>();
                 var option = objOption.ListOption(1);
                 listOption.Add(option);
-                var rent = new Model.Rent { RendId = 1, ReservationId = 1, ClientId = 1, CarId = 1, DateDeparture = DateTime.Parse("2017-03-27"), DateReturn = DateTime.Parse("2017-03-29"), Cost = 80, Options = listOption };
+                var rent = new Model.Rent { RentId = 1, ReservationId = 1, ClientId = 1, CarId = 1, DateDeparture = DateTime.Parse("2017-03-27"), DateReturn = DateTime.Parse("2017-03-29"), Cost = 80, Options = listOption };
                 list.Add(rent);
 
                 listOption = new List<Model.Option>();
@@ -36,7 +36,7 @@ namespace URent.Models.Manager
                 listOption.Add(option);
                 option = objOption.ListOption(2);
                 listOption.Add(option);
-                rent = new Model.Rent { RendId = 2, ReservationId = 1, ClientId = 2, CarId = 2, DateDeparture = DateTime.Parse("2017-04-01"), DateReturn = DateTime.Parse("2017-04-03"), Cost = 90, Options = listOption };
+                rent = new Model.Rent { RentId = 2, ReservationId = 1, ClientId = 2, CarId = 2, DateDeparture = DateTime.Parse("2017-04-01"), DateReturn = DateTime.Parse("2017-04-03"), Cost = 90, Options = listOption };
                 list.Add(rent);
                 var json = JsonConvert.SerializeObject(list);
                 Helper.CreateJson("Rent", json);
@@ -66,7 +66,8 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des locations</returns>
         private IList<Model.Rent> ReadRent()
         {
-            return JsonConvert.DeserializeObject<List<Model.Rent>>(Helper.ReadJson("Rent"));
+            var list = JsonConvert.DeserializeObject<List<Model.Rent>>(Helper.ReadJson("Rent"));
+            return list ?? new List<Model.Rent>();
         }
 
         /// <summary>
@@ -80,15 +81,22 @@ namespace URent.Models.Manager
             try
             {
                 var list = (List<Model.Rent>)ReadRent();
-                if (rent.RendId > 0)
+                if (rent.RentId > 0)
                 {
                     //Remove rent to edit
-                    list.RemoveAll(u => u.RendId == rent.RendId);
+                    list.RemoveAll(u => u.RentId == rent.RentId);
                 }
                 else
                 {
                     //If new rent, we add the max RentId + 1
-                    rent.RendId = list.Max(u => u.RendId) + 1;
+                    if (list.Count > 0)
+                    {
+                        rent.RentId = list.Max(u => u.RentId) + 1;
+                    }
+                    else
+                    {
+                        rent.RentId = 1;
+                    }
                 }
                 list.Add(rent);
                 Generate(list);
@@ -100,10 +108,10 @@ namespace URent.Models.Manager
             }
         }
 
-        //public IList<Model.Rent> ListRent()
-        //{
-        //    return ReadRent();
-        //}
+        public IList<Model.Rent> ListRent()
+        {
+            return ReadRent();
+        }
 
         //public IList<Model.Rent> ListRent(int id)
         //{

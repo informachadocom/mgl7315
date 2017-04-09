@@ -1,0 +1,80 @@
+﻿@model URent.Models.SearchViewModel
+
+@{
+    ViewBag.Title = "Rent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Rent", "AdminHome", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.DateDeparture, new { @class = "col-md-2 control-label" })
+        <div class="col-md-2">
+            @Html.TextBoxFor(m => m.DateDeparture, new { @class = "form-control", @style = "width:100px" })
+        </div>
+        <div class="col-md-4">
+            @Html.DropDownListFor(m => m.TimeDeparture, new SelectList(Model.ListTimeDeparture, Model.TimeDeparture))
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.DateReturn, new { @class = "col-md-2 control-label" })
+        <div class="col-md-2">
+            @Html.TextBoxFor(m => m.DateReturn, new { @class = "form-control", @style = "width:100px" })
+        </div>
+        <div class="col-md-4">
+            @Html.DropDownListFor(m => m.TimeReturn, new SelectList(Model.ListTimeReturn, Model.TimeReturn))
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ListCategory, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.ListCategory, "CategoryId", "Name", Model.CategoryId))
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ListOption, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @foreach (var item in Model.ListOption)
+            {
+                var check = false;
+                foreach (var o in Model.SelectedOptions)
+                {
+                    if (item.OptionId == o)
+                    {
+                        check = true;
+                    }
+                }
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"
+                               name="SelectedOptions"
+                               value="@item.OptionId"
+                               checked="@check" /> @item.Name
+                        </label>
+                    </div>
+            }
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ListClient, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.ClientId, new SelectList((Model.ListClient.Select(c => new { c.ClientId, FirstName = c.FirstName + " " + c.Surname})), "ClientId", "FirstName", Model.ClientId))
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.ReservationId)
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Register" />
+        </div>
+    </div>
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

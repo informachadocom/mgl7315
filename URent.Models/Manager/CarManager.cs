@@ -65,6 +65,18 @@ namespace URent.Models.Manager
 
         /// <summary>
         /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction retourne une voiture par ID
+        /// </summary>
+        /// <returns>Retourne une voiture</returns>
+        public Model.Car ListCar(int id)
+        {
+            var list = ReadCar();
+            list = list.Where(c => c.CarId == id).ToList();
+            return list[0];
+        }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
         /// Description: Cette fonction lit le fichier Json avec les données des voitures d'une catégorie
         /// </summary>
         /// <param name="id">ID de la catégorie</param>
