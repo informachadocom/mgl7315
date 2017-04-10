@@ -246,6 +246,12 @@
     <Content Include="Views\AdminHome\Index.cshtml" />
     <Content Include="Views\AdminHome\Reservation.cshtml" />
     <Content Include="Views\AdminHome\Rent.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\Shared\_LoginPartialAdmin.cshtml" />
+    <Content Include="Views\AdminAccount\ChangePassword.cshtml" />
+    <Content Include="Views\AdminAccount\Manage.cshtml" />
+    <Content Include="Views\AdminAccount\Register.cshtml" />
+    <Content Include="Views\Home\ListReservation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

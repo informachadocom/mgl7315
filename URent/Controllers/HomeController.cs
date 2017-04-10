@@ -95,7 +95,7 @@ namespace URent.Controllers
             }
 
             // Something failed, redisplay form
-            return View(model);
+            return View("Result", model);
         }
 
         //
@@ -201,6 +201,18 @@ namespace URent.Controllers
             }
         }
 
+        public ActionResult ListReservation()
+        {
+            if (client.isAuthenticated())
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
         private IList<Category> ListCategory()
         {
             return category.ListCategories();
@@ -228,13 +240,13 @@ namespace URent.Controllers
             var hourString = "";
             var minute = "";
             var list = new List<string>();
-            for(var i = 0; i <= 10; i++)
+            for (var i = 0; i <= 10; i++)
             {
                 hour += 1;
                 hourString = FormatTime(hour);
                 for (var a = 0; a <= 1; a++)
                 {
-                    if (a%2 == 0)
+                    if (a % 2 == 0)
                     {
                         minute = "00";
                     }

@@ -1,15 +1,12 @@
-﻿@if (@HttpContext.Current.Session["Name"] != null)
+﻿@if (@HttpContext.Current.Session["NameAdmin"] != null)
 {
-    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    using (Html.BeginForm("LogOff", "AdminAccount", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
     @Html.AntiForgeryToken()
 
     <ul class="nav navbar-nav navbar-right">
         <li>
-            @Html.ActionLink("Hello " + @HttpContext.Current.Session["Name"].ToString() + "!", "Manage", "Account", routeValues: null, htmlAttributes: new { title = "User account" })
-        </li>
-        <li>
-            @Html.ActionLink("My reservations", "ListReservation", "Home", routeValues: null, htmlAttributes: new { title = "My reservations" })
+            @Html.ActionLink("Hello " + @HttpContext.Current.Session["NameAdmin"].ToString() + "!", "Manage", "Account", routeValues: null, htmlAttributes: new { title = "User account" })
         </li>
         <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
     </ul>
