@@ -13,7 +13,10 @@ namespace URent.Models.Interfaces
         bool Generate();
         IList<Reservation> ListReservations();
         Reservation ListReservation(int id);
+        IList<Model.List.Reservation> ListReservationByClient(int id);
         Reservation CreateUpdate(Reservation reservation);
         IList<Reservation> ListReservationsWithNoRent();
+        bool CheckCancelDelay(int id);
+        bool Cancel(int id);
     }
 }

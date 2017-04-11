@@ -6,7 +6,7 @@
 
     <ul class="nav navbar-nav navbar-right">
         <li>
-            @Html.ActionLink("Hello " + @HttpContext.Current.Session["NameAdmin"].ToString() + "!", "Manage", "Account", routeValues: null, htmlAttributes: new { title = "User account" })
+            @Html.ActionLink("Hello " + @HttpContext.Current.Session["NameAdmin"].ToString() + "!", "Manage", "AdminAccount", routeValues: null, htmlAttributes: new { title = "User account" })
         </li>
         <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
     </ul>
@@ -15,7 +15,7 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        <li>@Html.ActionLink("Register", "Register", "AdminAccount", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "AdminAccount", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }

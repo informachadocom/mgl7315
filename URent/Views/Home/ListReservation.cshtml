@@ -1,9 +1,49 @@
-﻿@model URent.Models.Model.Reservation
+﻿@model IList<URent.Models.Model.List.Reservation>
 
 @{
-    ViewBag.Title = "ListReservation";
+    ViewBag.Title = "My reservations";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>@ViewBag.Title</h2>
 
+<div class="row">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Reservation Date</th>
+                <th>Category</th>
+                <th>Departure date</th>
+                <th>Return date</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td>@obj.ReservationId</td>
+                    <td>@obj.DateReservation.ToShortDateString()</td>
+                    <td>@obj.Category</td>
+                    <td>@obj.DateStartRent</td>
+                    <td>@obj.DateReturnRent</td>
+                    <td>@Html.ActionLink("Cancel", "Cancel", "Home", new { ReservationId = obj.ReservationId }, null)</td>
+                    <td>
+                        <button class="btn btn-large btn-primary" data-toggle="confirmation"
+                                data-btn-ok-label="Continue!" data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                data-btn-ok-class="btn-success"
+                                data-btn-cancel-label="Stop!" data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                data-btn-cancel-class="btn-danger"
+                                data-title="There is an applicable cancellation fees!" data-content="Do you want to continue ?">
+                            Cancel
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

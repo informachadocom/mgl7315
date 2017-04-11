@@ -1,8 +1,6 @@
 ﻿using Ninject;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using URent.Models;
 using URent.Models.Interfaces;
@@ -23,6 +21,7 @@ namespace URent.Controllers
 
         public AdminHomeController([Named("Prod")] IUser _user, IReservation _reservation, IClient _client, ICategory _category, ICar _car, IOption _option, IRent _rent, ISearch _search)
         {
+            if (_user == null) throw new ArgumentNullException(nameof(_user));
             user = _user;
             reservation = _reservation;
             client = _client;
@@ -147,6 +146,11 @@ namespace URent.Controllers
             model.ListTimeReturn= listTime;
             model.ListClient = client.ListClients();
             return View(model);
+        }
+
+        public ActionResult Confirmation()
+        {
+            return View();
         }
 
         private void AddErrors(string error)

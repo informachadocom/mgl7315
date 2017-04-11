@@ -29,7 +29,7 @@ namespace URent.Models.Manager
                 var listOption = new List<Option>();
                 var option = objOption.ListOption(1);
                 listOption.Add(option);
-                var reservation = new Reservation { ReservationId = 1, ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption };
+                var reservation = new Reservation { ReservationId = 1, ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 listOption = new List<Option>();
@@ -37,7 +37,7 @@ namespace URent.Models.Manager
                 listOption.Add(option);
                 option = objOption.ListOption(2);
                 listOption.Add(option);
-                reservation = new Reservation { ReservationId = 2, ClientId = 2, CarId = 2, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption };
+                reservation = new Reservation { ReservationId = 2, ClientId = 2, CarId = 2, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 listOption = new List<Option>();
@@ -45,7 +45,7 @@ namespace URent.Models.Manager
                 listOption.Add(option);
                 option = objOption.ListOption(2);
                 listOption.Add(option);
-                reservation = new Reservation { ReservationId = 3, ClientId = 2, CarId = 3, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption };
+                reservation = new Reservation { ReservationId = 3, ClientId = 2, CarId = 3, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 var json = JsonConvert.SerializeObject(list);
@@ -109,6 +109,42 @@ namespace URent.Models.Manager
 
         /// <summary>
         /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction retourne les reservations d'un client
+        /// </summary>
+        /// <param name="id">ID du client</param>
+        /// <returns>Retourne toutes les reservations du client</returns>
+        public IList<Model.List.Reservation> ListReservationByClient(int id)
+        {
+            var objC = new CarManager();
+            var objCat = new CategoryManager();
+            var listC = objC.ListCars();
+            var listCat = objCat.ListCategories();
+            var list = ReadReservation();
+
+            var query = from r in list
+                        join c in listC on r.CarId equals c.CarId
+                        select new { r.ReservationId, r.DateReservation, r.DateStartRent, r.DateReturnRent, r.Cost, r.ClientId, c.CategoryId };
+
+            var table = from q in query
+                        join c in listCat on q.CategoryId equals c.CategoryId
+                        where (q.ClientId == id)
+                        select new { q.ReservationId, q.DateReservation, q.DateStartRent, q.DateReturnRent, q.Cost, c.Name };
+
+            var listR = table.Select(obj => new Model.List.Reservation
+            {
+                ReservationId = obj.ReservationId,
+                DateReservation = obj.DateReservation,
+                DateStartRent = obj.DateStartRent,
+                DateReturnRent = obj.DateReturnRent,
+                Cost = obj.Cost,
+                Category = obj.Name
+            }).ToList();
+
+            return listR;
+        }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
         /// Description: Cette fonction retourne une liste des reservations qui n'ont pas de location
         /// </summary>
         /// <returns>List de reservations</returns>
@@ -118,8 +154,8 @@ namespace URent.Models.Manager
             var objRent = new RentManager();
             var listRen = objRent.ListRent();
             var table = (from r in listRes
-                        where (listRen.Where(re => re.ReservationId == r.ReservationId).Count() <= 0)
-                        select r).ToList();
+                         where (listRen.Where(re => re.ReservationId == r.ReservationId).Count() <= 0)
+                         select r).ToList();
             return table;
         }
 
@@ -158,6 +194,39 @@ namespace URent.Models.Manager
             catch (Exception e)
             {
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction vérifie si l'annulation d'une reservation est possible sans frais
+        /// </summary>
+        /// <param name="id">ID de la reservation</param>
+        /// <returns>Retourne true si le délais d'annulation sans frais est possible</returns>
+        public bool CheckCancelDelay(int id)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction annule une reservation
+        /// 0 = Annulé
+        /// </summary>
+        /// <param name="id">ID de la reservation</param>
+        /// <returns>Retourne true si l'annulation est réalisé avec succès / Sinon retourne false</returns>
+        public bool Cancel(int id)
+        {
+            try
+            {
+                var model = ListReservation(id);
+                model.Status = 0;
+                CreateUpdate(model);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
         }
 

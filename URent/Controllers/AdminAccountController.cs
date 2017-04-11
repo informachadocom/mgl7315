@@ -104,7 +104,7 @@ namespace URent.Controllers
                     var result = user.CreateUpdate(modelUser);
                     if (result)
                     {
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "AdminHome");
                     }
                     AddErrors("Error");
                 }

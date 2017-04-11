@@ -57,6 +57,7 @@
     <Compile Include="Interfaces\ICategory.cs" />
     <Compile Include="Manager\CarManager.cs" />
     <Compile Include="Manager\UserManager.cs" />
+    <Compile Include="Model\List\Reservation.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Util\Crypt.cs" />
     <Compile Include="Manager\RentManager.cs" />

@@ -201,7 +201,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\bootstrap-confirmation.min.js" />
     <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap_old.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -252,6 +254,7 @@
     <Content Include="Views\AdminAccount\Manage.cshtml" />
     <Content Include="Views\AdminAccount\Register.cshtml" />
     <Content Include="Views\Home\ListReservation.cshtml" />
+    <Content Include="Views\AdminHome\Confirmation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

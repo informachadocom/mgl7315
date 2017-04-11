@@ -205,11 +205,31 @@ namespace URent.Controllers
         {
             if (client.isAuthenticated())
             {
-                return View();
+                var model = reservation.ListReservationByClient(ClientId);
+                return View(model);
+            }
+            return RedirectToAction("Login", "Account");
+        }
+
+        public ActionResult Cancel()
+        {
+            var reservationId = Request.QueryString["ReservationId"];
+            var id = int.Parse(reservationId);
+            var delay = reservation.CheckCancelDelay(id);
+            if (delay)
+            {
+                //On peut canceler la reservation sans frais d'annulation
+                var result = reservation.Cancel(id);
+                if (!result)
+                {
+                    AddErrors("Error in cancelation!");
+                }
+                return RedirectToAction("ListReservation", "Home");
             }
             else
             {
-                return RedirectToAction("Login", "Account");
+                //Il y a un frais d'annulation à payer
+                return RedirectToAction("ListReservation", "Home");
             }
         }
 
@@ -268,5 +288,18 @@ namespace URent.Controllers
             }
             return time.ToString();
         }
+
+        private int ClientId
+        {
+            get
+            {
+                if (Session["ClientId"] != null)
+                {
+                    return int.Parse(Session["ClientId"].ToString());
+                }
+                return 0;
+            }
+        }
+
     }
 }

@@ -36,8 +36,8 @@
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" class="btn btn-default" value="Update" />
-            <input type="submit" class="btn btn-default" value="Delete" formaction="@Url.Action("Delete", "Account")" />
-            @Html.ActionLink("Change Password", "ChangePassword", "Account", routeValues: null, htmlAttributes: new { id = "changePassword" })
+            <input type="submit" class="btn btn-default" value="Delete" formaction="@Url.Action("Delete", "AdminAccount")" />
+            @Html.ActionLink("Change Password", "ChangePassword", "AdminAccount", routeValues: null, htmlAttributes: new { id = "changePassword" })
         </div>
     </div>
 }
