@@ -11,39 +11,44 @@
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
-            <tr>
-                <th>#</th>
-                <th>Reservation Date</th>
-                <th>Category</th>
-                <th>Departure date</th>
-                <th>Return date</th>
-                <th></th>
-                <th></th>
-            </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Reservation Date</th>
+                    <th>Category</th>
+                    <th>Departure date</th>
+                    <th>Return date</th>
+                    <th></th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var obj in Model)
+                @foreach (var obj in Model)
             {
-                <tr>
-                    <td>@obj.ReservationId</td>
-                    <td>@obj.DateReservation.ToShortDateString()</td>
-                    <td>@obj.Category</td>
-                    <td>@obj.DateStartRent</td>
-                    <td>@obj.DateReturnRent</td>
-                    <td>@Html.ActionLink("Cancel", "Cancel", "Home", new { ReservationId = obj.ReservationId }, null)</td>
-                    <td>
-                        <button class="btn btn-large btn-primary" data-toggle="confirmation"
-                                data-btn-ok-label="Continue!" data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                data-btn-ok-class="btn-success"
-                                data-btn-cancel-label="Stop!" data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                data-btn-cancel-class="btn-danger"
-                                data-title="There is an applicable cancellation fees!" data-content="Do you want to continue ?">
-                            Cancel
-                        </button>
-                    </td>
-                </tr>
-            }
+                    <tr>
+                        <td>@obj.ReservationId</td>
+                        <td>@obj.DateReservation.ToShortDateString()</td>
+                        <td>@obj.Category</td>
+                        <td>@obj.DateStartRent</td>
+                        <td>@obj.DateReturnRent</td>
+                        <td>@Html.ActionLink("Cancel", "Cancel", "Home", new { ReservationId = obj.ReservationId }, null)</td>
+                        <td>
+                            <button class="btn btn-large btn-primary" data-toggle="confirmation"
+                                    data-btn-ok-label="Continue!" data-btn-ok-icon="glyphicon glyphicon-share-alt"
+                                    data-btn-ok-class="btn-success" onConfirm="location.href='@Url.Action("Cancel", "Home", new { ReservationId = obj.ReservationId })'"
+                                    data-btn-cancel-label="Stop!" data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
+                                    data-btn-cancel-class="btn-danger" data-placement="left"
+                                    data-title="Cancellation fees will be charged you!" data-content="Do you want to continue ?">
+                                Cancel
+                            </button>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
 </div>
+@section Scripts {
+    <script>
+        $('[data-toggle=confirmation]').confirmation({ btnOkClass: 'btn btn-sm btn-success', btnCancelClass: 'btn btn-sm btn-danger' });
+    </script>
+}
