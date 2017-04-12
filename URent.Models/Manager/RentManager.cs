@@ -75,8 +75,8 @@ namespace URent.Models.Manager
         /// Description: Cette fonction crée/modifie une location
         /// </summary>
         /// <param name="rent">Objet de location à créer/modifier</param>
-        /// <returns>Retourne true si la création/modification est faite avec succès / Sinon retourne false</returns>
-        public bool CreateUpdate(Model.Rent rent)
+        /// <returns>Retourne l'ID de la location</returns>
+        public int CreateUpdate(Model.Rent rent)
         {
             try
             {
@@ -100,11 +100,11 @@ namespace URent.Models.Manager
                 }
                 list.Add(rent);
                 Generate(list);
-                return true;
+                return rent.RentId;
             }
             catch (Exception e)
             {
-                return false;
+                return 0;
             }
         }
 

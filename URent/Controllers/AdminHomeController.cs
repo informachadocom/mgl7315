@@ -44,27 +44,34 @@ namespace URent.Controllers
 
         public ActionResult Reservation()
         {
-            var model = new List<ReservationViewModel>();
-            var list = reservation.ListReservationsWithNoRent();
-            if (list != null && list.Count > 0)
+            if (user.isAuthenticated())
             {
-                foreach (var r in list)
+                var model = new List<ReservationViewModel>();
+                var list = reservation.ListReservationsWithNoRent();
+                if (list != null && list.Count > 0)
                 {
-                    var obj = new ReservationViewModel();
-                    var resultCar = car.ListCar(r.CarId);
-                    var resultClient = client.ListClient(r.ClientId);
-                    obj.ReservationId = r.ReservationId;
-                    obj.ClientName = string.Format("{0} {1}", resultClient.FirstName, resultClient.Surname);
-                    obj.Car = resultCar.Name;
-                    obj.Category = category.ListCategory(resultCar.CategoryId).Name;
-                    obj.Cost = r.Cost;
-                    obj.DateReservation = r.DateReservation;
-                    obj.DateStartRent = r.DateStartRent;
-                    obj.DateReturnRent = r.DateReturnRent;
-                    model.Add(obj);
+                    foreach (var r in list)
+                    {
+                        var obj = new ReservationViewModel();
+                        var resultCar = car.ListCar(r.CarId);
+                        var resultClient = client.ListClient(r.ClientId);
+                        obj.ReservationId = r.ReservationId;
+                        obj.ClientName = $"{resultClient.FirstName} {resultClient.Surname}";
+                        obj.Car = resultCar.Name;
+                        obj.Category = category.ListCategory(resultCar.CategoryId).Name;
+                        obj.Cost = r.Cost;
+                        obj.DateReservation = r.DateReservation;
+                        obj.DateStartRent = r.DateStartRent;
+                        obj.DateReturnRent = r.DateReturnRent;
+                        model.Add(obj);
+                    }
                 }
+                return View(model);
             }
-            return View(model);
+            else
+            {
+                return RedirectToAction("Login", "AdminAccount");
+            }
         }
 
         public ActionResult Rent()
@@ -106,46 +113,54 @@ namespace URent.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Rent(SearchViewModel model)
         {
-            var rentModel = new Rent();
-            var dateDeparture = FormatDateTime(DateTime.Parse(model.DateDeparture.ToString()), model.TimeDeparture);
-            var dateReturn = FormatDateTime(DateTime.Parse(model.DateReturn.ToString()), model.TimeReturn);
-            //Check if category is available
-            if (search.CheckAvailableCategory(dateDeparture, dateReturn, model.CategoryId, model.ReservationId))
+            if (user.isAuthenticated())
             {
-                rentModel.CarId = search.GetCarAvailable(dateDeparture, dateReturn, model.CategoryId, model.ReservationId);
-                rentModel.ClientId = model.ClientId;
-                rentModel.DateDeparture = dateDeparture;
-                rentModel.DateReturn = dateReturn;
-                rentModel.Options = new List<Option>();
-                foreach (var o in model.SelectedOptions)
+                var rentModel = new Rent();
+                var dateDeparture = FormatDateTime(DateTime.Parse(model.DateDeparture.ToString()), model.TimeDeparture);
+                var dateReturn = FormatDateTime(DateTime.Parse(model.DateReturn.ToString()), model.TimeReturn);
+                //Check if category is available
+                if (search.CheckAvailableCategory(dateDeparture, dateReturn, model.CategoryId, model.ReservationId))
                 {
-                    rentModel.Options.Add(option.ListOption(o));
-                }
-                rentModel.ReservationId = model.ReservationId;
-                rentModel.UserId = int.Parse(Session["UserId"].ToString());
-                var result = rent.CreateUpdate(rentModel);
-                if (result)
-                {
-                    return RedirectToAction("Confirmation", "AdminHome", rentModel);
+                    rentModel.CarId = search.GetCarAvailable(dateDeparture, dateReturn, model.CategoryId, model.ReservationId);
+                    rentModel.ClientId = model.ClientId;
+                    rentModel.DateDeparture = dateDeparture;
+                    rentModel.DateReturn = dateReturn;
+                    rentModel.Options = new List<Option>();
+                    foreach (var o in model.SelectedOptions)
+                    {
+                        rentModel.Options.Add(option.ListOption(o));
+                    }
+                    rentModel.ReservationId = model.ReservationId;
+                    rentModel.UserId = int.Parse(Session["UserId"].ToString());
+                    var id = rent.CreateUpdate(rentModel);
+                    if (id > 0)
+                    {
+                        rentModel.RentId = id;
+                        return View("Confirmation", rentModel);
+                    }
+                    else
+                    {
+                        AddErrors("Error in creating the rent!");
+                    }
                 }
                 else
                 {
-                    AddErrors("Error in creating the rent!");
+                    AddErrors("Category is not more available!");
                 }
+                var listCategories = category.ListCategories();
+                var listOptions = option.ListOptions();
+                var listTime = ListTime();
+                model.ListCategory = listCategories;
+                model.ListOption = listOptions;
+                model.ListTimeDeparture = listTime;
+                model.ListTimeReturn = listTime;
+                model.ListClient = client.ListClients();
+                return View(model);
             }
             else
             {
-                AddErrors("Category is not more available!");
+                return RedirectToAction("Login", "AdminAccount");
             }
-            var listCategories = category.ListCategories();
-            var listOptions = option.ListOptions();
-            var listTime = ListTime();
-            model.ListCategory = listCategories;
-            model.ListOption = listOptions;
-            model.ListTimeDeparture = listTime;
-            model.ListTimeReturn= listTime;
-            model.ListClient = client.ListClients();
-            return View(model);
         }
 
         public ActionResult Confirmation()

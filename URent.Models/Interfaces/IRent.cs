@@ -10,7 +10,7 @@ namespace URent.Models.Interfaces
     public interface IRent
     {
         bool Generate();
-        bool CreateUpdate(Model.Rent rent);
+        int CreateUpdate(Model.Rent rent);
         IList<Model.Rent> ListRent();
     }
 }
