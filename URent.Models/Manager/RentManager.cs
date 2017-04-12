@@ -28,7 +28,7 @@ namespace URent.Models.Manager
                 var listOption = new List<Model.Option>();
                 var option = objOption.ListOption(1);
                 listOption.Add(option);
-                var rent = new Model.Rent { RentId = 1, ReservationId = 1, ClientId = 1, CarId = 1, DateDeparture = DateTime.Parse("2017-03-27"), DateReturn = DateTime.Parse("2017-03-29"), Cost = 80, Options = listOption };
+                var rent = new Model.Rent { RentId = 1, ReservationId = 1, ClientId = 1, CarId = 1, DateDeparture = DateTime.Parse("2017-03-27"), DateReturn = DateTime.Parse("2017-03-29"), Cost = 80, Options = listOption, Status = 1};
                 list.Add(rent);
 
                 listOption = new List<Model.Option>();
@@ -36,7 +36,7 @@ namespace URent.Models.Manager
                 listOption.Add(option);
                 option = objOption.ListOption(2);
                 listOption.Add(option);
-                rent = new Model.Rent { RentId = 2, ReservationId = 1, ClientId = 2, CarId = 2, DateDeparture = DateTime.Parse("2017-04-01"), DateReturn = DateTime.Parse("2017-04-03"), Cost = 90, Options = listOption };
+                rent = new Model.Rent { RentId = 2, ReservationId = 1, ClientId = 2, CarId = 2, DateDeparture = DateTime.Parse("2017-04-01"), DateReturn = DateTime.Parse("2017-04-03"), Cost = 90, Options = listOption, Status = 1 };
                 list.Add(rent);
                 var json = JsonConvert.SerializeObject(list);
                 Helper.CreateJson("Rent", json);
@@ -113,11 +113,39 @@ namespace URent.Models.Manager
             return ReadRent();
         }
 
-        //public IList<Model.Rent> ListRent(int id)
-        //{
-        //    var list = ReadRent();
-        //    return list.Where(c => c.CarId == id).ToList();
-        //}
+        /// <summary>
+        /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction annule une location
+        /// 0 = Annulé
+        /// </summary>
+        /// <param name="id">ID de la location</param>
+        /// <returns>Retourne true si l'annulation est réalisé avec succès / Sinon retourne false</returns>
+        public bool Cancel(int id)
+        {
+            try
+            {
+                var model = ListRent(id);
+                model.Status = 0;
+                CreateUpdate(model);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Auteur: Marcos Muranaka
+        /// Description: Cette fonction liste une location
+        /// </summary>
+        /// <param name="id">ID de la location</param>
+        /// <returns>Retourne une location</returns>
+        private Model.Rent ListRent(int id)
+        {
+            var list = ReadRent();
+            return list.Where(c => c.RentId == id).ToList()[0];
+        }
 
         //public void Remove(Model.Rent rent)
         //{

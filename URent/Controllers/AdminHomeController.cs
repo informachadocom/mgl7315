@@ -74,6 +74,39 @@ namespace URent.Controllers
             }
         }
 
+        public ActionResult ListRent()
+        {
+            if (user.isAuthenticated())
+            {
+                var model = new List<RentViewModel>();
+                var list = rent.ListRent();
+                if (list != null && list.Count > 0)
+                {
+                    foreach (var r in list)
+                    {
+                        var obj = new RentViewModel();
+                        var resultCar = car.ListCar(r.CarId);
+                        var resultClient = client.ListClient(r.ClientId);
+                        obj.RentId = r.RentId;
+                        obj.ReservationId = r.ReservationId;
+                        obj.ClientName = $"{resultClient.FirstName} {resultClient.Surname}";
+                        obj.Car = resultCar.Name;
+                        obj.Category = category.ListCategory(resultCar.CategoryId).Name;
+                        obj.Cost = r.Cost;
+                        obj.DateDeparture = r.DateDeparture;
+                        obj.DateReturn = r.DateReturn;
+                        obj.Status = r.Status;
+                        model.Add(obj);
+                    }
+                }
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("Login", "AdminAccount");
+            }
+        }
+
         public ActionResult Rent()
         {
             var model = new SearchViewModel();
@@ -132,6 +165,7 @@ namespace URent.Controllers
                     }
                     rentModel.ReservationId = model.ReservationId;
                     rentModel.UserId = int.Parse(Session["UserId"].ToString());
+                    rentModel.Status = 1;
                     var id = rent.CreateUpdate(rentModel);
                     if (id > 0)
                     {
@@ -161,6 +195,18 @@ namespace URent.Controllers
             {
                 return RedirectToAction("Login", "AdminAccount");
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult Cancel(int id)
+        {
+            var result = rent.Cancel(id);
+            if (!result)
+            {
+                AddErrors("Error in cancelation!");
+            }
+            return RedirectToAction("ListRent", "AdminHome");
         }
 
         public ActionResult Confirmation()

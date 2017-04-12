@@ -12,5 +12,6 @@ namespace URent.Models.Interfaces
         bool Generate();
         int CreateUpdate(Model.Rent rent);
         IList<Model.Rent> ListRent();
+        bool Cancel(int id);
     }
 }

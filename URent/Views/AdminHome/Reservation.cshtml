@@ -18,6 +18,7 @@
                     <th>Client Name</th>
                     <th>Departure date</th>
                     <th>Return date</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
             </thead>
@@ -30,7 +31,13 @@
                         <td>@obj.ClientName</td>
                         <td>@obj.DateStartRent</td>
                         <td>@obj.DateReturnRent</td>
-                        <td>@Html.ActionLink("Create rent", "Rent", "AdminHome", new { ReservationId = obj.ReservationId }, null)</td>
+                        <td>@obj.StatusName</td>
+                        <td>
+                            @if (obj.Status == 1)
+                            {
+                                @Html.ActionLink("Create rent", "Rent", "AdminHome", new { ReservationId = obj.ReservationId }, null)
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>

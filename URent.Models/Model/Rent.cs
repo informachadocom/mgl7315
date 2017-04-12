@@ -19,5 +19,10 @@ namespace URent.Models.Model
         public DateTime DateReturn { get; set; }
         public decimal Cost { get; set; }
         public IList<Option> Options { get; set; }
+        /// <summary>
+        /// 0 = Annulé
+        /// 1 = Confirmé
+        /// </summary>
+        public int Status { get; set; }
     }
 }
