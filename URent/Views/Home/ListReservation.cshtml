@@ -17,7 +17,7 @@
                     <th>Category</th>
                     <th>Departure date</th>
                     <th>Return date</th>
-                    <th></th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
             </thead>
@@ -30,16 +30,12 @@
                         <td>@obj.Category</td>
                         <td>@obj.DateStartRent</td>
                         <td>@obj.DateReturnRent</td>
-                        <td>@Html.ActionLink("Cancel", "Cancel", "Home", new { ReservationId = obj.ReservationId }, null)</td>
+                        <td>@obj.StatusName</td>
                         <td>
-                            <button class="btn btn-large btn-primary" data-toggle="confirmation"
-                                    data-btn-ok-label="Continue!" data-btn-ok-icon="glyphicon glyphicon-share-alt"
-                                    data-btn-ok-class="btn-success" onConfirm="location.href='@Url.Action("Cancel", "Home", new { ReservationId = obj.ReservationId })'"
-                                    data-btn-cancel-label="Stop!" data-btn-cancel-icon="glyphicon glyphicon-ban-circle"
-                                    data-btn-cancel-class="btn-danger" data-placement="left"
-                                    data-title="Cancellation fees will be charged you!" data-content="Do you want to continue ?">
-                                Cancel
-                            </button>
+                            @if (obj.Status == 1)
+                            {
+                                <button class="btn btn-large btn-primary" data-id="@obj.ReservationId" data-delay="@obj.CancelDelay">Cancel</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -48,7 +44,25 @@
     </div>
 </div>
 @section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.2.0/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.2.0/jquery-confirm.min.js"></script>
     <script>
-        $('[data-toggle=confirmation]').confirmation({ btnOkClass: 'btn btn-sm btn-success', btnCancelClass: 'btn btn-sm btn-danger' });
+        $(".btn").click(function () {
+            var id = $(this).data('id');
+            var delay = $(this).data('delay');
+            $.confirm({
+                title: (delay=='True' ? 'Cancellation fees will be charged from you!' : 'This will cancel your reservation!'),
+                content: 'Do you want to continue?',
+                buttons: {
+                    confirm: function() {
+                        $.post('@Url.Action("Cancel", "Home")', { id: id }, function (data) {
+                            location.reload();
+                        });
+                    },
+                    cancel: function() {
+                    }
+                }
+            });
+        });
     </script>
 }

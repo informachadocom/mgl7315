@@ -9,6 +9,20 @@ namespace URent.Models.Model.List
         /// <summary>
         /// True = on peut annuler sans frais / False = frais à appliquer
         /// </summary>
-        public bool CancelDelay => ((DateTime.Today.Subtract(DateStartRent)).Minutes < 2880);
+        public bool CancelDelay => ((DateStartRent.Subtract(DateTime.Today)).TotalMinutes > 2880);
+
+        public string StatusName
+        {
+            get
+            {
+                switch (Status)
+                {
+                    case 1:
+                        return "Reserved";
+                    default:
+                        return "Canceled";
+                }
+            }
+        }
     }
 }

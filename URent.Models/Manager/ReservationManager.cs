@@ -123,12 +123,12 @@ namespace URent.Models.Manager
 
             var query = from r in list
                         join c in listC on r.CarId equals c.CarId
-                        select new { r.ReservationId, r.DateReservation, r.DateStartRent, r.DateReturnRent, r.Cost, r.ClientId, c.CategoryId };
+                        select new { r.ReservationId, r.DateReservation, r.DateStartRent, r.DateReturnRent, r.Cost, r.ClientId, c.CategoryId, r.Status };
 
             var table = from q in query
                         join c in listCat on q.CategoryId equals c.CategoryId
                         where (q.ClientId == id)
-                        select new { q.ReservationId, q.DateReservation, q.DateStartRent, q.DateReturnRent, q.Cost, c.Name };
+                        select new { q.ReservationId, q.DateReservation, q.DateStartRent, q.DateReturnRent, q.Cost, c.Name, q.Status };
 
             var listR = table.Select(obj => new Model.List.Reservation
             {
@@ -137,7 +137,8 @@ namespace URent.Models.Manager
                 DateStartRent = obj.DateStartRent,
                 DateReturnRent = obj.DateReturnRent,
                 Cost = obj.Cost,
-                Category = obj.Name
+                Category = obj.Name,
+                Status = obj.Status
             }).ToList();
 
             return listR;

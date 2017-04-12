@@ -211,10 +211,11 @@ namespace URent.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        public ActionResult Cancel()
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult Cancel(int id)
         {
-            var reservationId = Request.QueryString["ReservationId"];
-            var id = int.Parse(reservationId);
             var delay = reservation.CheckCancelDelay(id);
             if (delay)
             {
