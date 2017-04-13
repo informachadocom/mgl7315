@@ -55,6 +55,7 @@ namespace URent.Models.Manager
                              r.DateReturnRent,
                              r.CarId,
                              r.ReservationId,
+                             r.Status,
                              CategoryId = (from c in listC where c.CarId == r.CarId select (c.CategoryId)).First()
                          });
 
@@ -68,6 +69,7 @@ namespace URent.Models.Manager
                           (r.DateReturnRent >= dateDeparture && r.DateReturnRent <= dateReturn)))
                         && (r.CategoryId == categoryId || categoryId == 0)
                         && (r.ReservationId != reservationId || reservationId == 0)
+                        && r.Status == 1
                         select new { r.CategoryId };
 
             //Count the numbers of categories in reservation
@@ -132,6 +134,7 @@ namespace URent.Models.Manager
                              r.DateReturnRent,
                              r.CarId,
                              r.ReservationId,
+                             r.Status,
                              CategoryId = (from c in listC where c.CarId == r.CarId select (c.CategoryId)).First()
                          });
 
@@ -139,11 +142,12 @@ namespace URent.Models.Manager
             var query = (from c in listC
                          where c.CategoryId == categoryId && !(from r in table
                                                                where (((dateDeparture >= r.DateStartRent && dateDeparture <= r.DateReturnRent) ||
-                                                               (dateReturn >= r.DateStartRent && dateReturn <= r.DateReturnRent)) ||
-                                                               ((r.DateStartRent >= dateDeparture && r.DateStartRent <= dateReturn) ||
-                                                               (r.DateReturnRent >= dateDeparture && r.DateReturnRent <= dateReturn)) &&
-                                                               (r.CategoryId == categoryId || categoryId == 0)) &&
-                                                               (r.ReservationId != reservationId || reservationId == 0)
+                                                                       (dateReturn >= r.DateStartRent && dateReturn <= r.DateReturnRent)) ||
+                                                                      ((r.DateStartRent >= dateDeparture && r.DateStartRent <= dateReturn) ||
+                                                                       (r.DateReturnRent >= dateDeparture && r.DateReturnRent <= dateReturn)) &&
+                                                                      (r.CategoryId == categoryId || categoryId == 0)) &&
+                                                                     (r.ReservationId != reservationId || reservationId == 0) &&
+                                                                     r.Status == 1
                                                                select r.CarId).Contains(c.CarId)
                          select new { c.CarId }).FirstOrDefault();
 

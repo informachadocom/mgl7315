@@ -206,7 +206,8 @@ namespace URent.Models.Manager
         /// <returns>Retourne true si le délais d'annulation sans frais est possible</returns>
         public bool CheckCancelDelay(int id)
         {
-            return true;
+            var model = ListReservation(id);
+            return model.DateStartRent.Subtract(DateTime.Today).TotalMinutes > 2880;
         }
 
         /// <summary>
@@ -230,13 +231,6 @@ namespace URent.Models.Manager
                 return false;
             }
         }
-
-        //public void Remove(Model.Reservation reservation)
-        //{
-        //    var list = ReadReservation();
-        //    list.RemoveAll(u => u.ReservationId == reservation.ReservationId);
-        //    Generate(list);
-        //}
 
     }
 }

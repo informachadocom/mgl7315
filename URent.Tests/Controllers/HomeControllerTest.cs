@@ -20,6 +20,7 @@ namespace URent.Tests.Controllers
         private IRentPrice price;
         private IReservation reservation;
         private IUser user;
+        private IRent rent;
 
         [TestInitialize]
         public void MyTestInitialize()
@@ -33,6 +34,7 @@ namespace URent.Tests.Controllers
             price = kernel.Get<RentPriceManager>();
             reservation = kernel.Get<ReservationManager>();
             user = kernel.Get<UserManager>();
+            rent = kernel.Get<RentManager>();
         }
 
         [TestMethod]
@@ -152,10 +154,17 @@ namespace URent.Tests.Controllers
         }
 
         [TestMethod]
-        public void DeleteClient()
+        public void DeleteClientExist()
         {
             var result = client.Remove(5);
             Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void DeleteClientDoesNotExist()
+        {
+            var result = client.Remove(100);
+            Assert.IsFalse(result);
         }
 
         [TestMethod]
@@ -198,7 +207,16 @@ namespace URent.Tests.Controllers
         public void CreateReservation()
         {
             var listOption = new List<Option> { option.ListOption(1) };
-            var objReservation = new Reservation { ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption };
+            var objReservation = new Reservation
+            {
+                ClientId = 1,
+                CarId = 1,
+                DateReservation = DateTime.Now.AddDays(3),
+                DateStartRent = DateTime.Now.AddDays(3),
+                DateReturnRent = DateTime.Now.AddDays(4),
+                Cost = 80,
+                Options = listOption
+            };
 
             var result = reservation.CreateUpdate(objReservation);
             Assert.IsTrue(result.ReservationId > 0);
@@ -209,6 +227,60 @@ namespace URent.Tests.Controllers
         {
             var list = reservation.ListReservationsWithNoRent();
             Assert.IsTrue(list.Count > 0);
+        }
+
+        [TestMethod]
+        public void TransformReservationToRent()
+        {
+            var reserve = reservation.ListReservation(1);
+            var objRent = new Rent();
+            objRent.CarId = reserve.CarId;
+            objRent.ClientId = reserve.ClientId;
+            objRent.Cost = reserve.Cost;
+            //objRent.DateDeparture = reserve.DateStartRent;
+            //objRent.DateReturn = reserve.DateReturnRent;
+            objRent.DateDeparture = DateTime.Now.AddDays(3);
+            objRent.DateReturn = DateTime.Now.AddDays(4);
+            objRent.Options = new List<Option>();
+            objRent.Options = reserve.Options;
+            objRent.UserId = 1;
+            objRent.ReservationId = reserve.ReservationId;
+            var id = rent.CreateUpdate(objRent);
+            Assert.IsTrue(id > 0);
+        }
+
+        [TestMethod]
+        public void CancelReservation()
+        {
+            var reserv = reservation.ListReservation(1);
+            reserv.Status = 0;
+            var model = reservation.CreateUpdate(reserv);
+            Assert.IsTrue(model.Status == 0);
+        }
+
+        [TestMethod]
+        public void CancelRent()
+        {
+            var list = rent.ListRent();
+            var obj = list[0];
+            obj.Status = 0;
+            var id = rent.CreateUpdate(obj);
+            var list2 = rent.ListRent().Where(r => r.RentId == id).ToList();
+            Assert.IsTrue(list2[0].Status == 0);
+        }
+
+        [TestMethod]
+        public void ValidCancelDelayReservation()
+        {
+            var result = reservation.CheckCancelDelay(5);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void InvalidCancelDelayReservation()
+        {
+            var result = reservation.CheckCancelDelay(4);
+            Assert.IsFalse(result);
         }
     }
 }

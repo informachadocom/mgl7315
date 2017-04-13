@@ -102,9 +102,17 @@ namespace URent.Models.Manager
             try
             {
                 var list = (List<Model.Client>)ReadClient();
-                list.RemoveAll(u => u.ClientId == id);
-                Generate(list);
-                return true;
+                var exist = list.Any(c => c.ClientId == id);
+                if (exist)
+                {
+                    list.RemoveAll(u => u.ClientId == id);
+                    Generate(list);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception e)
             {
@@ -144,7 +152,7 @@ namespace URent.Models.Manager
                 Generate(list);
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }
