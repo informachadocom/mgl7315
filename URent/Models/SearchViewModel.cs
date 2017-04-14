@@ -14,6 +14,7 @@ namespace URent.Models
     {
         [Required]
         [Display(Name = "Date Departure")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime? DateDeparture { get; set; }
         public IList<string> ListTimeDeparture { get; set; }
         public string TimeDeparture { get; set; }

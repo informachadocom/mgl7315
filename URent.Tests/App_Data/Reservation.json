@@ -1,1 +1,131 @@
-[{"ReservationId":1,"ClientId":1,"CarId":1,"DateReservation":"2017-03-27T00:00:00","DateStartRent":"2017-03-27T00:00:00","DateReturnRent":"2017-03-28T00:00:00","Cost":80.0,"Options":[{"OptionId":1,"Name":"GPS","Price":0.0}]},{"ReservationId":2,"ClientId":2,"CarId":2,"DateReservation":"2017-03-27T00:00:00","DateStartRent":"2017-04-01T00:00:00","DateReturnRent":"2017-04-03T00:00:00","Cost":80.0,"Options":[{"OptionId":1,"Name":"GPS","Price":0.0},{"OptionId":2,"Name":"Child seat","Price":0.0}]},{"ReservationId":3,"ClientId":2,"CarId":3,"DateReservation":"2017-03-27T00:00:00","DateStartRent":"2017-04-01T00:00:00","DateReturnRent":"2017-04-03T00:00:00","Cost":80.0,"Options":[{"OptionId":1,"Name":"GPS","Price":0.0},{"OptionId":2,"Name":"Child seat","Price":0.0}]},{"ReservationId":4,"ClientId":1,"CarId":1,"DateReservation":"2017-03-27T00:00:00","DateStartRent":"2017-03-27T00:00:00","DateReturnRent":"2017-03-28T00:00:00","Cost":80.0,"Options":[{"OptionId":1,"Name":"GPS","Price":0.0}]}]
+[
+  {
+    "ReservationId": 1,
+    "ClientId": 1,
+    "CarId": 1,
+    "DateReservation": "2017-03-27T00:00:00",
+    "DateStartRent": "2017-03-27T00:00:00",
+    "DateReturnRent": "2017-03-28T00:00:00",
+    "Cost": 80.0,
+    "Options": [
+      {
+        "OptionId": 1,
+        "Name": "GPS",
+        "Price": 0.0
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "ReservationId": 2,
+    "ClientId": 2,
+    "CarId": 2,
+    "DateReservation": "2017-03-27T00:00:00",
+    "DateStartRent": "2017-04-01T00:00:00",
+    "DateReturnRent": "2017-04-03T00:00:00",
+    "Cost": 80.0,
+    "Options": [
+      {
+        "OptionId": 1,
+        "Name": "GPS",
+        "Price": 0.0
+      },
+      {
+        "OptionId": 2,
+        "Name": "Child seat",
+        "Price": 0.0
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "ReservationId": 3,
+    "ClientId": 2,
+    "CarId": 3,
+    "DateReservation": "2017-03-27T00:00:00",
+    "DateStartRent": "2017-04-01T00:00:00",
+    "DateReturnRent": "2017-04-03T00:00:00",
+    "Cost": 80.0,
+    "Options": [
+      {
+        "OptionId": 1,
+        "Name": "GPS",
+        "Price": 0.0
+      },
+      {
+        "OptionId": 2,
+        "Name": "Child seat",
+        "Price": 0.0
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "ReservationId": 4,
+    "ClientId": 1,
+    "CarId": 1,
+    "DateReservation": "2017-03-27T00:00:00",
+    "DateStartRent": "2017-03-27T00:00:00",
+    "DateReturnRent": "2017-03-28T00:00:00",
+    "Cost": 80.0,
+    "Options": [
+      {
+        "OptionId": 1,
+        "Name": "GPS",
+        "Price": 0.0
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "ReservationId": 5,
+    "ClientId": 5,
+    "CarId": 1,
+    "DateReservation": "2017-04-17T18:57:48.2779153-04:00",
+    "DateStartRent": "2017-04-17T18:57:48.2789178-04:00",
+    "DateReturnRent": "2017-04-18T18:57:48.2794191-04:00",
+    "Cost": 80.0,
+    "Options": [
+      {
+        "OptionId": 1,
+        "Name": "GPS",
+        "Price": 0.0
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "ReservationId": 6,
+    "ClientId": 6,
+    "CarId": 1,
+    "DateReservation": "2017-04-17T19:03:25.9738141-04:00",
+    "DateStartRent": "2017-04-17T19:03:25.9747895-04:00",
+    "DateReturnRent": "2017-04-18T19:03:25.9752913-04:00",
+    "Cost": 80.0,
+    "Options": [
+      {
+        "OptionId": 1,
+        "Name": "GPS",
+        "Price": 0.0
+      }
+    ],
+    "Status": 0
+  },
+  {
+    "ReservationId": 7,
+    "ClientId": 1,
+    "CarId": 1,
+    "DateReservation": "2017-04-17T19:12:18.5269648-04:00",
+    "DateStartRent": "2017-04-17T19:12:18.5284688-04:00",
+    "DateReturnRent": "2017-04-18T19:12:18.5284688-04:00",
+    "Cost": 80.0,
+    "Options": [
+      {
+        "OptionId": 1,
+        "Name": "GPS",
+        "Price": 0.0
+      }
+    ],
+    "Status": 0
+  }
+]

@@ -24,7 +24,7 @@
     <div class="col-md-4"><b>Total car:</b> @Model.TotalCar.ToString("C")</div>
 </div>
 <hr />
-@if (Model.Options.Count > 0)
+@if (Model.Options != null && Model.Options.Count > 0)
 {
     foreach (var op in Model.Options)
     {

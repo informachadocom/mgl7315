@@ -36,6 +36,7 @@ namespace URent.Controllers
             var listTime = ListTime();
             model.ListTimeDeparture = listTime;
             model.ListTimeReturn = listTime;
+            Session["SearchViewModel"] = model;
             return View(model);
         }
 
@@ -49,16 +50,25 @@ namespace URent.Controllers
             {
                 //Get available categories for these dates
                 var listCategories = search.GetCategoryAvailable(DateTime.Parse(model.DateDeparture.ToString()), DateTime.Parse(model.DateReturn.ToString()), model.CategoryId);
-                //Get options
-                var listOptions = option.ListOptions();
-                model.ListCategory = listCategories;
-                model.ListOption = listOptions;
-                model.DateDeparture = DateTime.Parse((DateTime.Parse(model.DateDeparture.ToString()).ToShortDateString()));
-                model.DateReturn = DateTime.Parse((DateTime.Parse(model.DateReturn.ToString()).ToShortDateString()));
-                //return RedirectToAction("Result", model);
-                return View("Result", model);
+                if (listCategories.Count > 0)
+                {
+                    //Get options
+                    var listOptions = option.ListOptions();
+                    model.ListCategory = listCategories;
+                    model.ListOption = listOptions;
+                    model.DateDeparture = DateTime.Parse((DateTime.Parse(model.DateDeparture.ToString()).ToShortDateString()));
+                    model.DateReturn = DateTime.Parse((DateTime.Parse(model.DateReturn.ToString()).ToShortDateString()));
+                    //return RedirectToAction("Result", model);
+                    return View("Result", model);
+                }
+                else
+                {
+                    //No vehicules available
+                    AddErrors("No vehicules are available for this date.");
+                }
             }
-            return View();
+            model = (SearchViewModel)Session["SearchViewModel"];
+            return View(model);
         }
 
         //
@@ -80,22 +90,34 @@ namespace URent.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.DateDeparture = DateTime.Parse(DateTime.Parse(model.DateDeparture.ToString()).ToShortDateString() + " " + model.TimeDeparture + ":00");
-                model.DateReturn = DateTime.Parse(DateTime.Parse(model.DateReturn.ToString()).ToShortDateString() + " " + model.TimeReturn + ":00");
-                var order = new List<Order>();
-                order = (List<Order>)search.SearchAvailableCategories(DateTime.Parse(model.DateDeparture.ToString()), DateTime.Parse(model.DateReturn.ToString()), model.CategoryId);
-                if (model.SelectedOptions.Length > 0)
+                if (model.CategoryId > 0)
                 {
-                    var listSelectedOptions = ListSelectedOption(model.SelectedOptions);
-                    order[0].Options = listSelectedOptions;
-                    order = price.RecalculatePriceSearch(order) as List<Order>;
+                    model.DateDeparture = DateTime.Parse(
+                        DateTime.Parse(model.DateDeparture.ToString()).ToShortDateString() + " " + model.TimeDeparture +
+                        ":00");
+                    model.DateReturn = DateTime.Parse(DateTime.Parse(model.DateReturn.ToString()).ToShortDateString() +
+                                                      " " + model.TimeReturn + ":00");
+                    var order = new List<Order>();
+                    order =
+                        (List<Order>)search.SearchAvailableCategories(DateTime.Parse(model.DateDeparture.ToString()),
+                            DateTime.Parse(model.DateReturn.ToString()), model.CategoryId);
+                    if (model.SelectedOptions != null && model.SelectedOptions.Length > 0)
+                    {
+                        var listSelectedOptions = ListSelectedOption(model.SelectedOptions);
+                        order[0].Options = listSelectedOptions;
+                        order = price.RecalculatePriceSearch(order) as List<Order>;
+                    }
+                    Session["order"] = order[0];
+                    return RedirectToAction("Summary");
                 }
-                Session["order"] = order[0];
-                return RedirectToAction("Summary");
+                else
+                {
+                    AddErrors("No vehicules are availables.");
+                }
             }
 
             // Something failed, redisplay form
-            return View("Result", model);
+            return RedirectToAction("Index", "Home", model);
         }
 
         //
@@ -115,7 +137,7 @@ namespace URent.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View();
+            return View((Order)Session["order"]);
         }
 
         //
@@ -152,6 +174,7 @@ namespace URent.Controllers
                         reserv.DateStartRent = model.DateDeparture;
                         reserv.DateReturnRent = model.DateReturn;
                         reserv.Options = model.Options;
+                        reserv.Status = 1;
                         var resultReservation = reservation.CreateUpdate(reserv);
                         if (resultReservation != null && resultReservation.ReservationId > 0)
                         {
@@ -216,22 +239,22 @@ namespace URent.Controllers
         [AllowAnonymous]
         public ActionResult Cancel(int id)
         {
-            var delay = reservation.CheckCancelDelay(id);
-            if (delay)
+            //var delay = reservation.CheckCancelDelay(id);
+            //if (delay)
+            //{
+            //On peut canceler la reservation sans frais d'annulation
+            var result = reservation.Cancel(id);
+            if (!result)
             {
-                //On peut canceler la reservation sans frais d'annulation
-                var result = reservation.Cancel(id);
-                if (!result)
-                {
-                    AddErrors("Error in cancelation!");
-                }
-                return RedirectToAction("ListReservation", "Home");
+                AddErrors("Error in cancelation!");
             }
-            else
-            {
-                //Il y a un frais d'annulation à payer
-                return RedirectToAction("ListReservation", "Home");
-            }
+            return RedirectToAction("ListReservation", "Home");
+            //}
+            //else
+            //{
+            //Il y a un frais d'annulation à payer
+            //return RedirectToAction("ListReservation", "Home");
+            //}
         }
 
         private IList<Category> ListCategory()

@@ -15,7 +15,7 @@
     <div class="form-group">
         @Html.LabelFor(m => m.DateDeparture, new { @class = "col-md-2 control-label" })
         <div class="col-md-2">
-            @Html.TextBoxFor(m => m.DateDeparture, new { @class = "form-control", @style = "width:100px" })
+            @Html.TextBoxFor(m => m.DateDeparture, new { @class = "form-control", @style = "width:118px", @id = "txtDateDeparture", @placeholder = "DD/MM/YYYY" })
         </div>
         <div class="col-md-4">
             @Html.DropDownListFor(m => m.TimeDeparture, new SelectList(Model.ListTimeDeparture))
@@ -24,7 +24,7 @@
         <div class="form-group">
             @Html.LabelFor(m => m.DateReturn, new { @class = "col-md-2 control-label" })
             <div class="col-md-2">
-                @Html.TextBoxFor(m => m.DateReturn, new { @class = "form-control", @style = "width:100px" })
+                @Html.TextBoxFor(m => m.DateReturn, new { @class = "form-control", @style = "width:118px", @id = "txtDateReturn", @placeholder = "DD/MM/YYYY" })
             </div>
             <div class="col-md-4">
                 @Html.DropDownListFor(m => m.TimeReturn, new SelectList(Model.ListTimeReturn))
@@ -45,4 +45,26 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("#txtDateDeparture, #txtDateReturn").datepicker(
+                {
+                    dateFormat: 'dd/mm/yy'
+                });
+        });
+
+        $(function () {
+            $.validator.methods.date = function (value, element) {
+                if ($.browser.webkit) {
+                    var d = new Date();
+                    return this.optional(element) || !/Invalid|NaN/.test(new Date(d.toLocaleDateString(value)));
+                }
+                else {
+                    return this.optional(element) || !/Invalid|NaN/.test(new Date(value));
+                }
+            };
+        });
+    </script>
 }
