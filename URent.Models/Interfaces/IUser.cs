@@ -15,7 +15,7 @@ namespace URent.Models.Interfaces
         bool Remove(int id);
         bool CreateUpdate(Model.User user);
         Model.User Authentification(Model.User user);
-        bool isAuthenticated();
+        bool IsAuthenticated();
         bool CheckAvailableEmail(int userId, string email);
     }
 }

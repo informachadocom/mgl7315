@@ -34,10 +34,15 @@
                         <td>
                             @if (obj.Status == 1 && obj.DateStartRent > DateTime.Now)
                             {
+<<<<<<< HEAD
                                 <button class="btn btn-large btn-primary" data-id="@obj.ReservationId" data-delay="@obj.CancelDelay">Cancel</button>
                                 }
                             <button class="btn btn-large btn-secondary" data-id="" data-delay="">Test</button>
 
+=======
+                                <button class="btn btn-primary" data-id="@obj.ReservationId" data-delay="@obj.CancelDelay">Cancel</button>
+                            }
+>>>>>>> origin/master
                         </td>
                     </tr>
                 }
@@ -53,11 +58,11 @@
             var id = $(this).data('id');
             var delay = $(this).data('delay');
             $.confirm({
-                title: (delay == 'False' ? 'Cancellation fees will be charged from you!' : 'This will cancel your reservation!'),
+                title: (delay === 'False' ? 'Cancellation fees will be charged from you!' : 'This will cancel your reservation!'),
                 content: 'Do you want to continue?',
                 buttons: {
                     confirm: function() {
-                        $.post('@Url.Action("Cancel", "Home")', { id: id }, function (data) {
+                        $.post('@Url.Action("Cancel", "Home")', { id: id }, function () {
                             location.reload();
                         });
                     },

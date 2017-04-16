@@ -1,1 +1,34 @@
+<<<<<<< HEAD
 [{"ClientId":2,"Surname":"fred","FirstName":"Frederic","Email":"fred@gmail.com","Password":"1324"},{"ClientId":3,"Surname":"marcos","FirstName":"Marcos","Email":"marcos@gmail.com","Password":"1324"},{"ClientId":4,"Surname":"youssef","FirstName":"Youssef","Email":"youssef@gmail.com","Password":"1324"},{"ClientId":5,"Surname":"yes","FirstName":"yess","Email":"yess","Password":"123"},{"ClientId":6,"Surname":"12","FirstName":"12","Email":"1@example.com","Password":"123"}]
+=======
+[
+  {
+    "ClientId": 1,
+    "Surname": "ricardo",
+    "FirstName": "Ricardo",
+    "Email": "ricardo@gmail.com",
+    "Password": "WUqua34TEu4GzJjoaOxLSMUHyoJk0YmE0KtpmIT5fATKIKa1nT4bHyRp1yjAOY2YXPSz/m1VFd/1p0XzKuP9jrBN2HHrb92z6crer6sF2x5frFqIIyLBcdqQgSAkjEW9"
+  },
+  {
+    "ClientId": 2,
+    "Surname": "fred",
+    "FirstName": "Frederic",
+    "Email": "fred@gmail.com",
+    "Password": "2xsO1oPmnERPJB0mJf3h7zwXYKDynDXwKGghN8ap7uMQHsWcGV3IQQjPflhDtfQWGTYAaGJirCKNCzid3duNoeEGshBB5/uuVunfI7tuDoVj+3hgNkyve8Wl9b39UZNw"
+  },
+  {
+    "ClientId": 4,
+    "Surname": "youssef",
+    "FirstName": "Youssef",
+    "Email": "youssef@gmail.com",
+    "Password": "+kEagHdb0ZNl6enyqH4GsyfSBKEhGcSSgZ4dotEYY05LHkucxhqOzT+2QOuLaf7rghjjENiiAwK1XwyBm702iP1TGWM++ixqXN1PWzhQ+3rDrpcqCZ1RHoz9qo9jFp1W"
+  },
+  {
+    "ClientId": 3,
+    "Surname": "marcos",
+    "FirstName": "Marcos",
+    "Email": "marcos@gmail.com",
+    "Password": "4Ph/ltEi5klukkzrpiDljSYrOTe27zKyfXttJ17JNcgg7U3y/eaViO8q6gakyRp/CovhIMHJ0aBM0RrZ8aCcQhRV9FFpu0NhnLl06hK1OfitRqY6lNqmma7J2vHdRt4V"
+  }
+]
+>>>>>>> origin/master

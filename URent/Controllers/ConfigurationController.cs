@@ -1,8 +1,4 @@
 ﻿using Ninject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using URent.Models.Interfaces;
 
@@ -10,37 +6,31 @@ namespace URent.Controllers
 {
     public class ConfigurationController : Controller
     {
-        private readonly IClient client;
-        private readonly ICar car;
-        private readonly ICategory category;
-        private readonly IOption option;
-        private readonly IReservation reservation;
-        private readonly IRentPrice price;
-        public ConfigurationController([Named("Prod")] IClient _client, ICar _car, ICategory _category, IOption _option, IReservation _reservation, IRentPrice _price)
+        private readonly IClient _client;
+        private readonly ICar _car;
+        private readonly ICategory _category;
+        private readonly IOption _option;
+        private readonly IReservation _reservation;
+        private readonly IRentPrice _price;
+        public ConfigurationController([Named("Prod")] IClient client, ICar car, ICategory category, IOption option, IReservation reservation, IRentPrice price)
         {
-            client = _client;
-            car = _car;
-            category = _category;
-            option = _option;
-            reservation = _reservation;
-            price = _price;
+            _client = client;
+            _car = car;
+            _category = category;
+            _option = option;
+            _reservation = reservation;
+            _price = price;
         }
 
-
-        // GET: Configuration
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         public ActionResult GenerateData()
         {
-            category.Generate();
-            car.Generate();
-            client.Generate();
-            option.Generate();
-            price.Generate();
-            //reservation.Generate();
+            _category.Generate();
+            _car.Generate();
+            _client.Generate();
+            _option.Generate();
+            _price.Generate();
+            _reservation.Generate();
             ViewBag.Message = "Data generated!";
             return View();
         }

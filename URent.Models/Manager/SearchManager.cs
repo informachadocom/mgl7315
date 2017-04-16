@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using URent.Models.Interfaces;
+using URent.Models.Model;
 
 namespace URent.Models.Manager
 {
@@ -12,6 +13,27 @@ namespace URent.Models.Manager
     /// </summary>
     public class SearchManager : ISearch
     {
+        private readonly IRentPrice _objPrice;
+        private readonly IReservation _objRes;
+        private readonly ICar _objCar;
+        private readonly ICategory _objCat;
+
+        public SearchManager()
+        {
+            _objPrice = new RentPriceManager();
+            _objRes = new ReservationManager();
+            _objCar = new CarManager();
+            _objCat = new CategoryManager();
+        }
+
+        public SearchManager(IRentPrice objPrice, IReservation objRes, ICar objCar, ICategory objCat)
+        {
+            _objPrice = objPrice;
+            _objRes = objRes;
+            _objCar = objCar;
+            _objCat = objCat;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction cherche les catégories encore disponibles pour la réservation
@@ -19,15 +41,13 @@ namespace URent.Models.Manager
         /// <param name="dateDeparture">Date de sortie</param>
         /// <param name="dateReturn">Date de retour</param>
         /// <param name="categoryId">(Optionnel) ID de la catégorie / Si pas envoyé ou zero, la fonction cherche pour toutes les catégories</param>
+        /// <param name="reservationId">ID de la réservation (optionnel)</param>
         /// <returns>Retourne une liste des catégories disponibles</returns>
-        public IList<Model.Order> SearchAvailableCategories(DateTime dateDeparture, DateTime dateReturn, int categoryId, int reservationId = 0)
+        public IList<Order> SearchAvailableCategories(DateTime dateDeparture, DateTime dateReturn, int categoryId, int reservationId = 0)
         {
-
             //List of categories available
             var listCategoryAvailable = GetCategoryAvailable(dateDeparture, dateReturn, categoryId, reservationId);
-            var listCategoriesPrice = new List<Model.Order>();
-            var objPrice = new RentPriceManager();
-            listCategoriesPrice = (List<Model.Order>)objPrice.CalculatePriceSearch(listCategoryAvailable, dateDeparture, dateReturn);
+            var listCategoriesPrice = (List<Order>)_objPrice.CalculatePriceSearch(listCategoryAvailable, dateDeparture, dateReturn);
             return listCategoriesPrice;
         }
 
@@ -38,14 +58,12 @@ namespace URent.Models.Manager
         /// <param name="dateDeparture">Date de sortie</param>
         /// <param name="dateReturn">Date de retour</param>
         /// <param name="categoryId">(Optionnel) ID de la catégorie / Si pas envoyé ou zero, la fonction cherche pour toutes les catégories</param>
+        /// <param name="reservationId">ID de réservation (optionnel)</param>
         /// <returns>Retourne une liste des catégories disponibles</returns>
-        public IList<Model.Category> GetCategoryAvailable(DateTime dateDeparture, DateTime dateReturn, int categoryId, int reservationId = 0)
+        public IList<Category> GetCategoryAvailable(DateTime dateDeparture, DateTime dateReturn, int categoryId, int reservationId = 0)
         {
-            var objRes = new ReservationManager();
-            var objCar = new CarManager();
-            var objOption = new OptionManager();
-            var listR = objRes.ListReservations();
-            var listC = objCar.ListCars();
+            var listR = _objRes.ListReservations();
+            var listC = _objCar.ListCars();
             //Create a temporary table with all necessaries columns
             var table = (from r in listR
                          select
@@ -83,18 +101,17 @@ namespace URent.Models.Manager
                              };
 
 
-            var listCategory = new List<Model.Category>();
-            var objCat = new CategoryManager();
+            List<Category> listCategory;
             if (categoryId > 0)
             {
-                listCategory = new List<Model.Category> { objCat.ListCategory(categoryId) };
+                listCategory = new List<Category> { _objCat.ListCategory(categoryId) };
             }
             else
             {
-                listCategory = (List<Model.Category>)objCat.ListCategories();
+                listCategory = (List<Category>)_objCat.ListCategories();
             }
             //List of categories available
-            var listCategoryAvailable = new List<Model.Category>();
+            var listCategoryAvailable = new List<Category>();
             //Verify if exists categories cars available
             foreach (var cat in listCategory)
             {
@@ -103,7 +120,7 @@ namespace URent.Models.Manager
                 count = count - countCategory;
                 if (count > 0)
                 {
-                    var category = objCat.ListCategory(cat.CategoryId);
+                    var category = _objCat.ListCategory(cat.CategoryId);
                     listCategoryAvailable.Add(category);
                 }
             }
@@ -117,14 +134,13 @@ namespace URent.Models.Manager
         /// <param name="dateDeparture">Date de sortie</param>
         /// <param name="dateReturn">Date de retour</param>
         /// <param name="categoryId">ID de la catégorie</param>
+        /// <param name="reservationId">ID de la réservation (optionnel)</param>
         /// <returns>Retourne un ID de la voiture disponible</returns>
         public int GetCarAvailable(DateTime dateDeparture, DateTime dateReturn, int categoryId, int reservationId = 0)
         {
             var carId = 0;
-            var objRes = new ReservationManager();
-            var objCar = new CarManager();
-            var listR = objRes.ListReservations();
-            var listC = objCar.ListCars();
+            var listR = _objRes.ListReservations();
+            var listC = _objCar.ListCars();
             //Create a temporary table with all necessaries columns
             var table = (from r in listR
                          select
@@ -168,6 +184,7 @@ namespace URent.Models.Manager
         /// <param name="dateDeparture">Date de sortie</param>
         /// <param name="dateReturn">Date de retour</param>
         /// <param name="categoryId">ID de la catégorie</param>
+        /// <param name="reservationId">ID de la réservation (optionnel)</param>
         /// <returns>Retourne TRUE si disponible / FALSE si pas disponible</returns>
         public bool CheckAvailableCategory(DateTime dateDeparture, DateTime dateReturn, int categoryId, int reservationId = 0)
         {
@@ -183,8 +200,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne la quantité de véhicules</returns>
         private int GetCountCars(int categoryId)
         {
-            var obj = new CarManager();
-            var list = obj.ListCarsByCategory(categoryId);
+            var list = _objCar.ListCarsByCategory(categoryId);
             return list.Count();
         }
     }

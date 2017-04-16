@@ -8,10 +8,10 @@ namespace URent.Controllers
 {
     public class AdminAccountController : Controller
     {
-        private readonly IUser user;
-        public AdminAccountController([Named("Prod")] IUser _user)
+        private readonly IUser _user;
+        public AdminAccountController([Named("Prod")] IUser user)
         {
-            user = _user;
+            _user = user;
         }
 
         //
@@ -33,7 +33,7 @@ namespace URent.Controllers
             if (ModelState.IsValid)
             {
                 //Check email already exists
-                var emailExist = user.CheckAvailableEmail(0, model.Email);
+                var emailExist = _user.CheckAvailableEmail(0, model.Email);
 
                 if (!emailExist)
                 {
@@ -43,7 +43,7 @@ namespace URent.Controllers
                     modelClient.Surname = model.Surname;
                     modelClient.Email = model.Email;
                     modelClient.Password = model.Password;
-                    var result = user.CreateUpdate(modelClient);
+                    var result = _user.CreateUpdate(modelClient);
                     if (result)
                     {
                         return RedirectToAction("Index", "AdminHome");
@@ -68,7 +68,7 @@ namespace URent.Controllers
             //Session["ClientId"] = 5;
             if (UserId > 0)
             {
-                var modelUser = user.ListUser(UserId);
+                var modelUser = _user.ListUser(UserId);
                 var model = new UpdateClientViewModel();
                 model.ClientId = modelUser.UserId;
                 model.FirstName = modelUser.FirstName;
@@ -92,16 +92,16 @@ namespace URent.Controllers
             if (ModelState.IsValid)
             {
                 //Check email already exists
-                var emailExist = user.CheckAvailableEmail(UserId, model.Email);
+                var emailExist = _user.CheckAvailableEmail(UserId, model.Email);
 
                 if (!emailExist)
                 {
 
-                    var modelUser = user.ListUser(model.ClientId);
+                    var modelUser = _user.ListUser(model.ClientId);
                     modelUser.FirstName = model.FirstName;
                     modelUser.Surname = model.Surname;
                     modelUser.Email = model.Email;
-                    var result = user.CreateUpdate(modelUser);
+                    var result = _user.CreateUpdate(modelUser);
                     if (result)
                     {
                         return RedirectToAction("Index", "AdminHome");
@@ -127,7 +127,7 @@ namespace URent.Controllers
         {
             if (model.ClientId > 0)
             {
-                var result = user.Remove(model.ClientId);
+                var result = _user.Remove(model.ClientId);
                 if (result)
                 {
                     Session.Clear();
@@ -160,14 +160,14 @@ namespace URent.Controllers
             if (ModelState.IsValid)
             {
                 //Load client
-                var modelUser = user.ListUser(UserId);
+                var modelUser = _user.ListUser(UserId);
                 modelUser.Password = model.CurrentPassword;
                 //Check if current password is correct
-                var resultAuth = user.Authentification(modelUser);
+                var resultAuth = _user.Authentification(modelUser);
                 if (resultAuth != null && resultAuth.UserId > 0)
                 {
                     modelUser.Password = model.NewPassword;
-                    var result = user.CreateUpdate(modelUser);
+                    var result = _user.CreateUpdate(modelUser);
                     if (result)
                     {
                         return RedirectToAction("Index", "AdminHome");
@@ -186,7 +186,7 @@ namespace URent.Controllers
 
         public ActionResult Login()
         {
-            if (user.isAuthenticated())
+            if (_user.IsAuthenticated())
             {
                 return RedirectToAction("Index", "AdminHome");
             }
@@ -197,10 +197,10 @@ namespace URent.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginViewModel model)
         {
-            if (!user.isAuthenticated())
+            if (!_user.IsAuthenticated())
             {
                 var modelUser = new User { Email = model.Email, Password = model.Password };
-                var result = user.Authentification(modelUser);
+                var result = _user.Authentification(modelUser);
                 if (result != null && result.UserId > 0)
                 {
                     LoadSession(result);

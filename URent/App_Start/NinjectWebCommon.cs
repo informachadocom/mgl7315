@@ -11,6 +11,7 @@ namespace URent.App_Start
     using Ninject;
     using Ninject.Web.Common;
     using Models.Interfaces;
+    using Models.Util;
     using Models.Manager;
 
     public static class NinjectWebCommon 
@@ -72,6 +73,8 @@ namespace URent.App_Start
             kernel.Bind<IRentPrice>().To<RentPriceManager>().Named("Prod");
             kernel.Bind<IRent>().To<RentManager>().Named("Prod");
             kernel.Bind<IUser>().To<UserManager>().Named("Prod");
+            kernel.Bind<IHelper>().To<Helper>().Named("Prod");
+            kernel.Bind<ICrypt>().To<Crypt>().Named("Prod");
         }
     }
 }

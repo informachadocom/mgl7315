@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using URent.Models.Interfaces;
 using System.Linq;
-using URent.Models.Util;
 using System;
 using System.Web;
+<<<<<<< HEAD
 using System.Text.RegularExpressions;
+=======
+using URent.Models.Util;
+>>>>>>> origin/master
 
 namespace URent.Models.Manager
 {
@@ -16,6 +19,22 @@ namespace URent.Models.Manager
     /// </summary>
     public class ClientManager : IClient
     {
+        private readonly IHelper _helper;
+        private readonly ICrypt _crypt;
+        private const string Key = "URent17";
+
+        public ClientManager()
+        {
+            _helper = new Helper();
+            _crypt = new Crypt();
+        }
+
+        public ClientManager(IHelper helper, ICrypt crypt)
+        {
+            _helper = helper;
+            _crypt = crypt;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -26,18 +45,18 @@ namespace URent.Models.Manager
             try
             {
                 var list = new List<Model.Client>();
-                var client = new Model.Client { ClientId = 1, FirstName = "Ricardo", Surname = "ricardo", Password = "1324", Email = "ricardo@gmail.com" };
+                var client = new Model.Client { ClientId = 1, FirstName = "Ricardo", Surname = "ricardo", Password = _crypt.Encrypt("1324", Key), Email = "ricardo@gmail.com" };
                 list.Add(client);
-                client = new Model.Client { ClientId = 2, FirstName = "Frederic", Surname = "fred", Password = "1324", Email = "fred@gmail.com" };
+                client = new Model.Client { ClientId = 2, FirstName = "Frederic", Surname = "fred", Password = _crypt.Encrypt("1324", Key), Email = "fred@gmail.com" };
                 list.Add(client);
-                client = new Model.Client { ClientId = 3, FirstName = "Marcos", Surname = "marcos", Password = "1324", Email = "marcos@gmail.com" };
+                client = new Model.Client { ClientId = 3, FirstName = "Marcos", Surname = "marcos", Password = _crypt.Encrypt("1324", Key), Email = "marcos@gmail.com" };
                 list.Add(client);
-                client = new Model.Client { ClientId = 4, FirstName = "Youssef", Surname = "youssef", Password = "1324", Email = "youssef@gmail.com" };
+                client = new Model.Client { ClientId = 4, FirstName = "Youssef", Surname = "youssef", Password = _crypt.Encrypt("1324", Key), Email = "youssef@gmail.com" };
                 list.Add(client);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("Client", json);
+                _helper.CreateJson("Client", json);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -52,7 +71,7 @@ namespace URent.Models.Manager
         private void Generate(List<Model.Client> users)
         {
             var json = JsonConvert.SerializeObject(users);
-            Helper.CreateJson("Client", json);
+            _helper.CreateJson("Client", json);
         }
 
         /// <summary>
@@ -62,7 +81,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des usagers</returns>
         private IList<Model.Client> ReadClient()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.Client>>(Helper.ReadJson("Client"));
+            var list = JsonConvert.DeserializeObject<List<Model.Client>>(_helper.ReadJson("Client"));
             if (list != null)
             {
                 return list;
@@ -115,7 +134,7 @@ namespace URent.Models.Manager
                     return false;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -131,6 +150,7 @@ namespace URent.Models.Manager
         {
             try
             {
+<<<<<<< HEAD
                 if (client.FirstName == null || client.Surname == null || client.Email == null || client.Password == null)
                 {
                     client.Error = "All the fields are required";
@@ -147,6 +167,9 @@ namespace URent.Models.Manager
                     client.Error = "Email already exists";
                     return false;
                 }
+=======
+                client.Password = _crypt.Encrypt(client.Password, Key);
+>>>>>>> origin/master
                 var list = (List<Model.Client>)ReadClient();
                 if (client.ClientId > 0)
                 {
@@ -169,7 +192,7 @@ namespace URent.Models.Manager
                 Generate(list);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -195,7 +218,7 @@ namespace URent.Models.Manager
                 return client;
             }
             var list = ReadClient();
-            var clientLogin = list.FirstOrDefault(u => u.Email == client.Email && u.Password == client.Password);
+            var clientLogin = list.FirstOrDefault(u => u.Email == client.Email && _crypt.Decrypt(u.Password, Key) == client.Password);
             return clientLogin;
         }
 
@@ -204,7 +227,7 @@ namespace URent.Models.Manager
         /// Description: Cette fonction check if the client is authenticated
         /// </summary>
         /// <returns>Return true if client is authenticated / False not authenticated</returns>
-        public bool isAuthenticated()
+        public bool IsAuthenticated()
         {
             return HttpContext.Current.Session["ClientId"] != null;
         }

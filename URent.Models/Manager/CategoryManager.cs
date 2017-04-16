@@ -14,6 +14,18 @@ namespace URent.Models.Manager
     /// </summary>
     public class CategoryManager : ICategory
     {
+        private readonly IHelper _helper;
+
+        public CategoryManager()
+        {
+            _helper = new Helper();
+        }
+
+        public CategoryManager(IHelper helper)
+        {
+            _helper = helper;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -31,9 +43,9 @@ namespace URent.Models.Manager
                 category = new Model.Category { CategoryId = 3, Name = "Family" };
                 list.Add(category);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("Category", json);
+                _helper.CreateJson("Category", json);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -47,7 +59,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des catégories</returns>
         private IList<Model.Category> ReadCategory()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.Category>>(Helper.ReadJson("Category"));
+            var list = JsonConvert.DeserializeObject<List<Model.Category>>(_helper.ReadJson("Category"));
             if (list != null)
             {
                 return list;

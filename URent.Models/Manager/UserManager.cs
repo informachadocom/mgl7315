@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using URent.Models.Interfaces;
 using System.Linq;
-using URent.Models.Util;
 using System;
 using System.Web;
+using URent.Models.Util;
 
 namespace URent.Models.Manager
 {
@@ -15,6 +15,22 @@ namespace URent.Models.Manager
     /// </summary>
     public class UserManager : IUser
     {
+        private readonly IHelper _helper;
+        private readonly ICrypt _crypt;
+        private const string Key = "URent17";
+
+        public UserManager()
+        {
+            _helper = new Helper();
+            _crypt = new Crypt();
+        }
+
+        public UserManager(IHelper helper, ICrypt crypt)
+        {
+            _helper = helper;
+            _crypt = crypt;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -25,14 +41,14 @@ namespace URent.Models.Manager
             try
             {
                 var list = new List<Model.User>();
-                var user = new Model.User { UserId = 1, FirstName = "Admin", Surname = "URent", Password = "1234", Email = "admin@admin.com" };
+                var user = new Model.User { UserId = 1, FirstName = "Admin", Surname = "URent",  Password = _crypt.Encrypt("1234", Key), Email = "admin@admin.com" };
                 list.Add(user);
-                user = new Model.User { UserId = 2, FirstName = "Admin2", Surname = "URent", Password = "1234", Email = "admin2@admin.com" };
+                user = new Model.User { UserId = 2, FirstName = "Admin2", Surname = "URent", Password = _crypt.Encrypt("1234", Key), Email = "admin2@admin.com" };
                 list.Add(user);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("User", json);
+                _helper.CreateJson("User", json);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -47,7 +63,7 @@ namespace URent.Models.Manager
         private void Generate(List<Model.User> users)
         {
             var json = JsonConvert.SerializeObject(users);
-            Helper.CreateJson("User", json);
+            _helper.CreateJson("User", json);
         }
 
         /// <summary>
@@ -57,7 +73,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des usagers</returns>
         private IList<Model.User> ReadUser()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.User>>(Helper.ReadJson("User"));
+            var list = JsonConvert.DeserializeObject<List<Model.User>>(_helper.ReadJson("User"));
             if (list != null)
             {
                 return list;
@@ -102,7 +118,7 @@ namespace URent.Models.Manager
                 Generate(list);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -118,6 +134,7 @@ namespace URent.Models.Manager
         {
             try
             {
+                user.Password = _crypt.Encrypt(user.Password, Key);
                 var list = (List<Model.User>)ReadUser();
                 if (user.UserId > 0)
                 {
@@ -140,7 +157,7 @@ namespace URent.Models.Manager
                 Generate(list);
                 return true;
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return false;
             }
@@ -155,7 +172,7 @@ namespace URent.Models.Manager
         public Model.User Authentification(Model.User user)
         {
             var list = ReadUser();
-            var userLogin = list.FirstOrDefault(u => u.Email == user.Email && u.Password == user.Password);
+            var userLogin = list.FirstOrDefault(u => u.Email == user.Email && u.Password == _crypt.Encrypt(user.Password, Key));
             return userLogin;
         }
 
@@ -164,7 +181,7 @@ namespace URent.Models.Manager
         /// Description: Cette fonction check if the User (admin) is authenticated
         /// </summary>
         /// <returns>Return true if user is authenticated / False not authenticated</returns>
-        public bool isAuthenticated()
+        public bool IsAuthenticated()
         {
             return HttpContext.Current.Session["UserId"] != null;
         }
