@@ -8,10 +8,10 @@ namespace URent.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IClient client;
-        public AccountController([Named("Prod")] IClient _client)
+        private readonly IClient _client;
+        public AccountController([Named("Prod")] IClient client)
         {
-            client = _client;
+            _client = client;
         }
 
         // GET: Account
@@ -43,7 +43,7 @@ namespace URent.Controllers
             if (ModelState.IsValid)
             {
                 //Check email already exists
-                var emailExist = client.CheckAvailableEmail(0, model.Email);
+                var emailExist = _client.CheckAvailableEmail(0, model.Email);
 
                 if (!emailExist)
                 {
@@ -53,7 +53,7 @@ namespace URent.Controllers
                     modelClient.Surname = model.Surname;
                     modelClient.Email = model.Email;
                     modelClient.Password = model.Password;
-                    var result = client.CreateUpdate(modelClient);
+                    var result = _client.CreateUpdate(modelClient);
                     if (result)
                     {
                         LoadSession(modelClient);
@@ -86,7 +86,7 @@ namespace URent.Controllers
             //Session["ClientId"] = 5;
             if (ClientId > 0)
             {
-                var modelClient = client.ListClient(ClientId);
+                var modelClient = _client.ListClient(ClientId);
                 var model = new UpdateClientViewModel();
                 model.ClientId = modelClient.ClientId;
                 model.FirstName = modelClient.FirstName;
@@ -98,7 +98,6 @@ namespace URent.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View();
         }
 
         //
@@ -111,16 +110,16 @@ namespace URent.Controllers
             if (ModelState.IsValid)
             {
                 //Check email already exists
-                var emailExist = client.CheckAvailableEmail(ClientId, model.Email);
+                var emailExist = _client.CheckAvailableEmail(ClientId, model.Email);
 
                 if (!emailExist)
                 {
 
-                    var modelClient = client.ListClient(model.ClientId);
+                    var modelClient = _client.ListClient(model.ClientId);
                     modelClient.FirstName = model.FirstName;
                     modelClient.Surname = model.Surname;
                     modelClient.Email = model.Email;
-                    var result = client.CreateUpdate(modelClient);
+                    var result = _client.CreateUpdate(modelClient);
                     if (result)
                     {
                         LoadSession(modelClient);
@@ -147,7 +146,7 @@ namespace URent.Controllers
         {
             if (model.ClientId > 0)
             {
-                var result = client.Remove(model.ClientId);
+                var result = _client.Remove(model.ClientId);
                 if (result)
                 {
                     Session.Clear();
@@ -180,14 +179,14 @@ namespace URent.Controllers
             if (ModelState.IsValid)
             {
                 //Load client
-                var modelClient = client.ListClient(ClientId);
+                var modelClient = _client.ListClient(ClientId);
                 modelClient.Password = model.CurrentPassword;
                 //Check if current password is correct
-                var resultAuth = client.Authentification(modelClient);
+                var resultAuth = _client.Authentification(modelClient);
                 if (resultAuth != null && resultAuth.ClientId > 0)
                 {
                     modelClient.Password = model.NewPassword;
-                    var result = client.CreateUpdate(modelClient);
+                    var result = _client.CreateUpdate(modelClient);
                     if (result)
                     {
                         LoadSession(modelClient);
@@ -214,7 +213,7 @@ namespace URent.Controllers
 
         public ActionResult Login()
         {
-            if (client.isAuthenticated())
+            if (_client.IsAuthenticated())
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -226,7 +225,7 @@ namespace URent.Controllers
         public ActionResult Login(LoginViewModel model)
         {
             var modelClient = new Client { Email = model.Email, Password = model.Password };
-            var result = client.Authentification(modelClient);
+            var result = _client.Authentification(modelClient);
             if (result != null && result.ClientId > 0)
             {
                 LoadSession(result);

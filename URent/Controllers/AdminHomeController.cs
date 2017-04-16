@@ -1,6 +1,7 @@
 ﻿using Ninject;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Web.Mvc;
 using URent.Models;
 using URent.Models.Interfaces;
@@ -10,32 +11,32 @@ namespace URent.Controllers
 {
     public class AdminHomeController : Controller
     {
-        private readonly IUser user;
-        private readonly IReservation reservation;
-        private readonly IClient client;
-        private readonly ICategory category;
-        private readonly ICar car;
-        private readonly IOption option;
-        private readonly IRent rent;
-        private readonly ISearch search;
+        private readonly IUser _user;
+        private readonly IReservation _reservation;
+        private readonly IClient _client;
+        private readonly ICategory _category;
+        private readonly ICar _car;
+        private readonly IOption _option;
+        private readonly IRent _rent;
+        private readonly ISearch _search;
 
-        public AdminHomeController([Named("Prod")] IUser _user, IReservation _reservation, IClient _client, ICategory _category, ICar _car, IOption _option, IRent _rent, ISearch _search)
+        public AdminHomeController([Named("Prod")] IUser user, IReservation reservation, IClient client, ICategory category, ICar car, IOption option, IRent rent, ISearch search)
         {
-            if (_user == null) throw new ArgumentNullException(nameof(_user));
-            user = _user;
-            reservation = _reservation;
-            client = _client;
-            category = _category;
-            car = _car;
-            option = _option;
-            search = _search;
-            rent = _rent;
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            _user = user;
+            _reservation = reservation;
+            _client = client;
+            _category = category;
+            _car = car;
+            _option = option;
+            _search = search;
+            _rent = rent;
         }
 
         // GET: AdminHome
         public ActionResult Index()
         {
-            if (!user.isAuthenticated())
+            if (!_user.IsAuthenticated())
             {
                 return RedirectToAction("Login", "AdminAccount");
             }
@@ -44,21 +45,21 @@ namespace URent.Controllers
 
         public ActionResult Reservation()
         {
-            if (user.isAuthenticated())
+            if (_user.IsAuthenticated())
             {
                 var model = new List<ReservationViewModel>();
-                var list = reservation.ListReservationsWithNoRent();
+                var list = _reservation.ListReservationsWithNoRent();
                 if (list != null && list.Count > 0)
                 {
                     foreach (var r in list)
                     {
                         var obj = new ReservationViewModel();
-                        var resultCar = car.ListCar(r.CarId);
-                        var resultClient = client.ListClient(r.ClientId);
+                        var resultCar = _car.ListCar(r.CarId);
+                        var resultClient = _client.ListClient(r.ClientId);
                         obj.ReservationId = r.ReservationId;
                         obj.ClientName = $"{resultClient.FirstName} {resultClient.Surname}";
                         obj.Car = resultCar.Name;
-                        obj.Category = category.ListCategory(resultCar.CategoryId).Name;
+                        obj.Category = _category.ListCategory(resultCar.CategoryId).Name;
                         obj.Cost = r.Cost;
                         obj.DateReservation = r.DateReservation;
                         obj.DateStartRent = r.DateStartRent;
@@ -76,22 +77,22 @@ namespace URent.Controllers
 
         public ActionResult ListRent()
         {
-            if (user.isAuthenticated())
+            if (_user.IsAuthenticated())
             {
                 var model = new List<RentViewModel>();
-                var list = rent.ListRent();
+                var list = _rent.ListRent();
                 if (list != null && list.Count > 0)
                 {
                     foreach (var r in list)
                     {
                         var obj = new RentViewModel();
-                        var resultCar = car.ListCar(r.CarId);
-                        var resultClient = client.ListClient(r.ClientId);
+                        var resultCar = _car.ListCar(r.CarId);
+                        var resultClient = _client.ListClient(r.ClientId);
                         obj.RentId = r.RentId;
                         obj.ReservationId = r.ReservationId;
                         obj.ClientName = $"{resultClient.FirstName} {resultClient.Surname}";
                         obj.Car = resultCar.Name;
-                        obj.Category = category.ListCategory(resultCar.CategoryId).Name;
+                        obj.Category = _category.ListCategory(resultCar.CategoryId).Name;
                         obj.Cost = r.Cost;
                         obj.DateDeparture = r.DateDeparture;
                         obj.DateReturn = r.DateReturn;
@@ -113,22 +114,22 @@ namespace URent.Controllers
 
             string reservationId = Request.QueryString["ReservationId"];
 
-            var list = reservation.ListReservation(int.Parse(reservationId));
-            var listCategories = category.ListCategories();
-            var listOptions = option.ListOptions();
+            var list = _reservation.ListReservation(int.Parse(reservationId));
+            var listCategories = _category.ListCategories();
+            var listOptions = _option.ListOptions();
             var listTime = ListTime();
 
             model.ListCategory = listCategories;
             model.ListOption = listOptions;
-            model.DateDeparture = DateTime.Parse((DateTime.Parse(list.DateStartRent.ToString()).ToShortDateString()));
-            model.DateReturn = DateTime.Parse((DateTime.Parse(list.DateReturnRent.ToString()).ToShortDateString()));
+            model.DateDeparture = DateTime.Parse((DateTime.Parse(list.DateStartRent.ToString(CultureInfo.InvariantCulture)).ToShortDateString()));
+            model.DateReturn = DateTime.Parse((DateTime.Parse(list.DateReturnRent.ToString(CultureInfo.InvariantCulture)).ToShortDateString()));
             model.ListTimeDeparture = listTime;
             model.ListTimeReturn = listTime;
-            model.CategoryId = car.ListCar(list.CarId).CategoryId;
-            model.TimeDeparture = string.Format("{0}:{1}", FormatTime(list.DateStartRent.Hour), FormatTime(list.DateStartRent.Minute));
-            model.TimeReturn = string.Format("{0}:{1}", FormatTime(list.DateReturnRent.Hour), FormatTime(list.DateReturnRent.Minute));
+            model.CategoryId = _car.ListCar(list.CarId).CategoryId;
+            model.TimeDeparture = $"{FormatTime(list.DateStartRent.Hour)}:{FormatTime(list.DateStartRent.Minute)}";
+            model.TimeReturn = $"{FormatTime(list.DateReturnRent.Hour)}:{FormatTime(list.DateReturnRent.Minute)}";
             model.ReservationId = int.Parse(reservationId);
-            model.ListClient = client.ListClients();
+            model.ListClient = _client.ListClients();
             model.ClientId = list.ClientId;
             int[] selectedOptions = new int[list.Options.Count];
             var i = 0;
@@ -146,27 +147,27 @@ namespace URent.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Rent(SearchViewModel model)
         {
-            if (user.isAuthenticated())
+            if (_user.IsAuthenticated())
             {
                 var rentModel = new Rent();
                 var dateDeparture = FormatDateTime(DateTime.Parse(model.DateDeparture.ToString()), model.TimeDeparture);
                 var dateReturn = FormatDateTime(DateTime.Parse(model.DateReturn.ToString()), model.TimeReturn);
                 //Check if category is available
-                if (search.CheckAvailableCategory(dateDeparture, dateReturn, model.CategoryId, model.ReservationId))
+                if (_search.CheckAvailableCategory(dateDeparture, dateReturn, model.CategoryId, model.ReservationId))
                 {
-                    rentModel.CarId = search.GetCarAvailable(dateDeparture, dateReturn, model.CategoryId, model.ReservationId);
+                    rentModel.CarId = _search.GetCarAvailable(dateDeparture, dateReturn, model.CategoryId, model.ReservationId);
                     rentModel.ClientId = model.ClientId;
                     rentModel.DateDeparture = dateDeparture;
                     rentModel.DateReturn = dateReturn;
                     rentModel.Options = new List<Option>();
                     foreach (var o in model.SelectedOptions)
                     {
-                        rentModel.Options.Add(option.ListOption(o));
+                        rentModel.Options.Add(_option.ListOption(o));
                     }
                     rentModel.ReservationId = model.ReservationId;
                     rentModel.UserId = int.Parse(Session["UserId"].ToString());
                     rentModel.Status = 1;
-                    var id = rent.CreateUpdate(rentModel);
+                    var id = _rent.CreateUpdate(rentModel);
                     if (id > 0)
                     {
                         rentModel.RentId = id;
@@ -181,14 +182,14 @@ namespace URent.Controllers
                 {
                     AddErrors("Category is not more available!");
                 }
-                var listCategories = category.ListCategories();
-                var listOptions = option.ListOptions();
+                var listCategories = _category.ListCategories();
+                var listOptions = _option.ListOptions();
                 var listTime = ListTime();
                 model.ListCategory = listCategories;
                 model.ListOption = listOptions;
                 model.ListTimeDeparture = listTime;
                 model.ListTimeReturn = listTime;
-                model.ListClient = client.ListClients();
+                model.ListClient = _client.ListClients();
                 return View(model);
             }
             else
@@ -201,7 +202,7 @@ namespace URent.Controllers
         [AllowAnonymous]
         public ActionResult Cancel(int id)
         {
-            var result = rent.Cancel(id);
+            var result = _rent.Cancel(id);
             if (!result)
             {
                 AddErrors("Error in cancelation!");
@@ -219,33 +220,24 @@ namespace URent.Controllers
             ModelState.AddModelError("", error);
         }
 
-        private IList<string> ListTime()
+        private static IList<string> ListTime()
         {
             var hour = 6;
-            var hourString = "";
-            var minute = "";
             var list = new List<string>();
             for (var i = 0; i <= 10; i++)
             {
                 hour += 1;
-                hourString = FormatTime(hour);
+                var hourString = FormatTime(hour);
                 for (var a = 0; a <= 1; a++)
                 {
-                    if (a % 2 == 0)
-                    {
-                        minute = "00";
-                    }
-                    else
-                    {
-                        minute = "30";
-                    }
-                    list.Add(string.Format("{0}:{1}", hourString, minute));
+                    var minute = a % 2 == 0 ? "00" : "30";
+                    list.Add($"{hourString}:{minute}");
                 }
             }
             return list;
         }
 
-        private string FormatTime(int time)
+        private static string FormatTime(int time)
         {
             if (time.ToString().Length == 1)
             {
@@ -254,9 +246,9 @@ namespace URent.Controllers
             return time.ToString();
         }
 
-        private DateTime FormatDateTime(DateTime date, string time)
+        private static DateTime FormatDateTime(DateTime date, string time)
         {
-            var formatDate = string.Format("{0} {1}:00", date.ToShortDateString(), time);
+            var formatDate = $"{date.ToShortDateString()} {time}:00";
             return DateTime.Parse(formatDate);
         }
 

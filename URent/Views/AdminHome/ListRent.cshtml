@@ -33,7 +33,7 @@
                         <td>
                             @if (@obj.Status == 1)
                             {
-                                <button class="btn btn-large btn-primary" data-id="@obj.RentId">Cancel</button>
+                                <button class="btn btn-primary" data-id="@obj.RentId">Cancel</button>
                             }
                         </td>
                     </tr>
@@ -57,7 +57,7 @@
                         action: function () {
                             $.post('@Url.Action("Cancel", "AdminHome")',
                                 { id: id },
-                                function (data) {
+                                function () {
                                     location.reload();
                                 });
                         }
@@ -67,7 +67,7 @@
                         action: function () {
                             $.post('@Url.Action("Cancel", "AdminHome")',
                                 { id: id },
-                                function (data) {
+                                function () {
                                     location.reload();
                                 });
                         }

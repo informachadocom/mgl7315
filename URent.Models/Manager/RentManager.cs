@@ -14,6 +14,21 @@ namespace URent.Models.Manager
     /// </summary>
     public class RentManager : IRent
     {
+        private readonly IHelper _helper;
+        private readonly IOption _objOption;
+
+        public RentManager()
+        {
+            _helper = new Helper();
+            _objOption = new OptionManager();
+        }
+
+        public RentManager(IHelper helper, IOption option)
+        {
+            _helper = helper;
+            _objOption = option;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -24,25 +39,24 @@ namespace URent.Models.Manager
             try
             {
                 var list = new List<Model.Rent>();
-                var objOption = new OptionManager();
                 var listOption = new List<Model.Option>();
-                var option = objOption.ListOption(1);
+                var option = _objOption.ListOption(1);
                 listOption.Add(option);
                 var rent = new Model.Rent { RentId = 1, ReservationId = 1, ClientId = 1, CarId = 1, DateDeparture = DateTime.Parse("2017-03-27"), DateReturn = DateTime.Parse("2017-03-29"), Cost = 80, Options = listOption, Status = 1};
                 list.Add(rent);
 
                 listOption = new List<Model.Option>();
-                option = objOption.ListOption(1);
+                option = _objOption.ListOption(1);
                 listOption.Add(option);
-                option = objOption.ListOption(2);
+                option = _objOption.ListOption(2);
                 listOption.Add(option);
                 rent = new Model.Rent { RentId = 2, ReservationId = 1, ClientId = 2, CarId = 2, DateDeparture = DateTime.Parse("2017-04-01"), DateReturn = DateTime.Parse("2017-04-03"), Cost = 90, Options = listOption, Status = 1 };
                 list.Add(rent);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("Rent", json);
+                _helper.CreateJson("Rent", json);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -56,7 +70,7 @@ namespace URent.Models.Manager
         private void Generate(List<Model.Rent> rent)
         {
             var json = JsonConvert.SerializeObject(rent);
-            Helper.CreateJson("Rent", json);
+            _helper.CreateJson("Rent", json);
         }
 
         /// <summary>
@@ -66,7 +80,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des locations</returns>
         private IList<Model.Rent> ReadRent()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.Rent>>(Helper.ReadJson("Rent"));
+            var list = JsonConvert.DeserializeObject<List<Model.Rent>>(_helper.ReadJson("Rent"));
             return list ?? new List<Model.Rent>();
         }
 
@@ -102,7 +116,7 @@ namespace URent.Models.Manager
                 Generate(list);
                 return rent.RentId;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 0;
             }
@@ -129,7 +143,7 @@ namespace URent.Models.Manager
                 CreateUpdate(model);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -146,13 +160,6 @@ namespace URent.Models.Manager
             var list = ReadRent();
             return list.Where(c => c.RentId == id).ToList()[0];
         }
-
-        //public void Remove(Model.Rent rent)
-        //{
-        //    var list = (List<Model.Rent>)ReadRent();
-        //    list.RemoveAll(u => u.RendId == rent.RendId);
-        //    Generate(list);
-        //}
 
     }
 }

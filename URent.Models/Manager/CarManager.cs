@@ -14,6 +14,18 @@ namespace URent.Models.Manager
     /// </summary>
     public class CarManager : ICar
     {
+        private readonly IHelper _helper;
+
+        public CarManager()
+        {
+            _helper = new Helper();
+        }
+
+        public CarManager(IHelper helper)
+        {
+            _helper = helper;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -33,10 +45,10 @@ namespace URent.Models.Manager
                 car = new Model.Car { CarId = 4, Name = "Fiesta", CategoryId = 3 };
                 list.Add(car);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("Car", json);
+                _helper.CreateJson("Car", json);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -49,7 +61,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des voitures</returns>
         private List<Model.Car> ReadCar()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.Car>>(Helper.ReadJson("Car"));
+            var list = JsonConvert.DeserializeObject<List<Model.Car>>(_helper.ReadJson("Car"));
             return list ?? new List<Model.Car>();
         }
 
@@ -86,43 +98,6 @@ namespace URent.Models.Manager
             var list = ReadCar();
             return list.Where(c => c.CategoryId == id).ToList();
         }
-
-        //public void GenerateCar(List<Model.Car> cars)
-        //{
-        //    var json = JsonConvert.SerializeObject(cars);
-        //    Util.CreateJson("Car", json);
-        //}
-
-
-        //public List<Model.Car> ListCar(int id)
-        //{
-        //    var list = ReadCar();
-        //    return list.Where(c => c.CarId == id).ToList();
-        //}
-
-        //public void AddModify(Model.Car car)
-        //{
-        //    var list = ReadCar();
-        //    if (car.CarId > 0)
-        //    {
-        //        //Remove car to edit
-        //        list.RemoveAll(u => u.CarId == car.CarId);
-        //    }
-        //    else
-        //    {
-        //        //If new car, we add the max CarId + 1
-        //        car.CarId = list.Max(u => u.CarId) + 1;
-        //    }
-        //    list.Add(car);
-        //    GenerateCar(list);
-        //}
-
-        //public void Remove(Model.Car car)
-        //{
-        //    var list = ReadCar();
-        //    list.RemoveAll(u => u.CarId == car.CarId);
-        //    GenerateCar(list);
-        //}
 
     }
 }

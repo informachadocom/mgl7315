@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using URent.Models.Interfaces;
 
 namespace URent.Models.Util
 {
@@ -8,7 +9,7 @@ namespace URent.Models.Util
     /// Date: 26/03/2017
     /// Description: Cette classe contient des fonctions utilitaires
     /// </summary>
-    public static class Helper
+    public class Helper : IHelper
     {
         /// <summary>
         /// Auteur: Marcos Muranaka
@@ -16,7 +17,7 @@ namespace URent.Models.Util
         /// </summary>
         /// <param name="name">Le nom du fichier</param>
         /// <param name="json">La structure de données en format Json</param>
-        public static void CreateJson(string name, string json)
+        public void CreateJson(string name, string json)
         {
             File.WriteAllText($@"{ReturnPathData()}\{name}.json", json);
         }
@@ -27,7 +28,7 @@ namespace URent.Models.Util
         /// </summary>
         /// <param name="name">Le nom du fichier</param>
         /// <returns>Retourne le contenu du fichier Json</returns>
-        public static string ReadJson(string name)
+        public string ReadJson(string name)
         {
             var file = $@"{ReturnPathData()}\{name}.json";
             if (File.Exists(file))
@@ -50,7 +51,7 @@ namespace URent.Models.Util
             }
             catch
             {
-                return System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString() + @"\App_Data";
+                return Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory).ToString()) + @"\App_Data";
             }
         }
     }

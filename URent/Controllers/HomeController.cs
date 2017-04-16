@@ -10,20 +10,20 @@ namespace URent.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ICategory category;
-        private readonly ISearch search;
-        private readonly IOption option;
-        private readonly IClient client;
-        private readonly IRentPrice price;
-        private readonly IReservation reservation;
-        public HomeController([Named("Prod")] ICategory _category, ISearch _search, IOption _option, IClient _client, IRentPrice _price, IReservation _reservation)
+        private readonly ICategory _category;
+        private readonly ISearch _search;
+        private readonly IOption _option;
+        private readonly IClient _client;
+        private readonly IRentPrice _price;
+        private readonly IReservation _reservation;
+        public HomeController([Named("Prod")] ICategory category, ISearch search, IOption option, IClient client, IRentPrice price, IReservation reservation)
         {
-            category = _category;
-            search = _search;
-            option = _option;
-            client = _client;
-            price = _price;
-            reservation = _reservation;
+            _category = category;
+            _search = search;
+            _option = option;
+            _client = client;
+            _price = price;
+            _reservation = reservation;
         }
 
         public ActionResult Index()
@@ -49,11 +49,11 @@ namespace URent.Controllers
             if (ModelState.IsValid)
             {
                 //Get available categories for these dates
-                var listCategories = search.GetCategoryAvailable(DateTime.Parse(model.DateDeparture.ToString()), DateTime.Parse(model.DateReturn.ToString()), model.CategoryId);
+                var listCategories = _search.GetCategoryAvailable(DateTime.Parse(model.DateDeparture.ToString()), DateTime.Parse(model.DateReturn.ToString()), model.CategoryId);
                 if (listCategories.Count > 0)
                 {
                     //Get options
-                    var listOptions = option.ListOptions();
+                    var listOptions = _option.ListOptions();
                     model.ListCategory = listCategories;
                     model.ListOption = listOptions;
                     model.DateDeparture = DateTime.Parse((DateTime.Parse(model.DateDeparture.ToString()).ToShortDateString()));
@@ -97,17 +97,15 @@ namespace URent.Controllers
                         ":00");
                     model.DateReturn = DateTime.Parse(DateTime.Parse(model.DateReturn.ToString()).ToShortDateString() +
                                                       " " + model.TimeReturn + ":00");
-                    var order = new List<Order>();
-                    order =
-                        (List<Order>)search.SearchAvailableCategories(DateTime.Parse(model.DateDeparture.ToString()),
-                            DateTime.Parse(model.DateReturn.ToString()), model.CategoryId);
+                    var order = (List<Order>)_search.SearchAvailableCategories(DateTime.Parse(model.DateDeparture.ToString()),
+                        DateTime.Parse(model.DateReturn.ToString()), model.CategoryId);
                     if (model.SelectedOptions != null && model.SelectedOptions.Length > 0)
                     {
                         var listSelectedOptions = ListSelectedOption(model.SelectedOptions);
                         order[0].Options = listSelectedOptions;
-                        order = price.RecalculatePriceSearch(order) as List<Order>;
+                        order = _price.RecalculatePriceSearch(order) as List<Order>;
                     }
-                    Session["order"] = order[0];
+                    if (order != null) Session["order"] = order[0];
                     return RedirectToAction("Summary");
                 }
                 else
@@ -126,7 +124,7 @@ namespace URent.Controllers
         {
             if (Session["order"] != null)
             {
-                if (!client.isAuthenticated())
+                if (!_client.IsAuthenticated())
                 {
                     TempData["Message"] = "To continue you have to login or register a new client.";
                     TempData["Redirect"] = "Summary";
@@ -157,17 +155,18 @@ namespace URent.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Reservation(Order model)
         {
-            if (client.isAuthenticated())
+            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (_client.IsAuthenticated())
             {
                 model = (Order)Session["Order"];
                 if (ModelState.IsValid)
                 {
                     //Check if the category still available
-                    var result = search.CheckAvailableCategory(model.DateDeparture, model.DateReturn, model.Category.CategoryId);
+                    var result = _search.CheckAvailableCategory(model.DateDeparture, model.DateReturn, model.Category.CategoryId);
                     if (result)
                     {
                         var reserv = new Reservation();
-                        reserv.CarId = search.GetCarAvailable(model.DateDeparture, model.DateReturn, model.Category.CategoryId);
+                        reserv.CarId = _search.GetCarAvailable(model.DateDeparture, model.DateReturn, model.Category.CategoryId);
                         reserv.ClientId = (int)Session["ClientId"];
                         reserv.Cost = model.Total;
                         reserv.DateReservation = DateTime.Today;
@@ -175,7 +174,7 @@ namespace URent.Controllers
                         reserv.DateReturnRent = model.DateReturn;
                         reserv.Options = model.Options;
                         reserv.Status = 1;
-                        var resultReservation = reservation.CreateUpdate(reserv);
+                        var resultReservation = _reservation.CreateUpdate(reserv);
                         if (resultReservation != null && resultReservation.ReservationId > 0)
                         {
                             ViewBag.Reservation = true;
@@ -208,7 +207,7 @@ namespace URent.Controllers
         {
             if (ViewBag.Reservation != null && ViewBag.Reservation == true)
             {
-                if (client.isAuthenticated())
+                if (_client.IsAuthenticated())
                 {
                     Session["order"] = null;
                     return View(model);
@@ -226,9 +225,9 @@ namespace URent.Controllers
 
         public ActionResult ListReservation()
         {
-            if (client.isAuthenticated())
+            if (_client.IsAuthenticated())
             {
-                var model = reservation.ListReservationByClient(ClientId);
+                var model = _reservation.ListReservationByClient(ClientId);
                 return View(model);
             }
             return RedirectToAction("Login", "Account");
@@ -243,7 +242,7 @@ namespace URent.Controllers
             //if (delay)
             //{
             //On peut canceler la reservation sans frais d'annulation
-            var result = reservation.Cancel(id);
+            var result = _reservation.Cancel(id);
             if (!result)
             {
                 AddErrors("Error in cancelation!");
@@ -259,7 +258,7 @@ namespace URent.Controllers
 
         private IList<Category> ListCategory()
         {
-            return category.ListCategories();
+            return _category.ListCategories();
         }
 
         private IList<Option> ListSelectedOption(int[] options)
@@ -267,7 +266,7 @@ namespace URent.Controllers
             var list = new List<Option>();
             foreach (var i in options)
             {
-                var op = option.ListOption(i);
+                var op = _option.ListOption(i);
                 list.Add(op);
             }
             return list;
@@ -281,15 +280,14 @@ namespace URent.Controllers
         private IList<string> ListTime()
         {
             var hour = 6;
-            var hourString = "";
-            var minute = "";
             var list = new List<string>();
             for (var i = 0; i <= 10; i++)
             {
                 hour += 1;
-                hourString = FormatTime(hour);
+                var hourString = FormatTime(hour);
                 for (var a = 0; a <= 1; a++)
                 {
+                    string minute;
                     if (a % 2 == 0)
                     {
                         minute = "00";

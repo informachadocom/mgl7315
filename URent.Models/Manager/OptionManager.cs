@@ -13,6 +13,17 @@ namespace URent.Models.Manager
     /// </summary>
     public class OptionManager : IOption
     {
+        private readonly IHelper _helper;
+
+        public OptionManager()
+        {
+            _helper = new Helper();
+        }
+        public OptionManager(IHelper helper)
+        {
+            _helper = helper;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -28,7 +39,7 @@ namespace URent.Models.Manager
                 option = new Model.Option { OptionId = 2, Name = "Child seat" };
                 list.Add(option);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("Option", json);
+                _helper.CreateJson("Option", json);
             }
             catch
             {
@@ -44,7 +55,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des options</returns>
         private IList<Model.Option> ReadOption()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.Option>>(Helper.ReadJson("Option"));
+            var list = JsonConvert.DeserializeObject<List<Model.Option>>(_helper.ReadJson("Option"));
             if (list != null)
             {
                 return list;

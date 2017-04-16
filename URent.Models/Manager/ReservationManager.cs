@@ -15,6 +15,30 @@ namespace URent.Models.Manager
     /// </summary>
     public class ReservationManager : IReservation
     {
+        private readonly IHelper _helper;
+        private readonly IOption _objOption;
+        private readonly ICategory _objCat;
+        private readonly IRent _objRent;
+        private readonly ICar _objCar;
+
+        public ReservationManager()
+        {
+            _helper = new Helper();
+            _objOption = new OptionManager();
+            _objCat = new CategoryManager();
+            _objRent = new RentManager();
+            _objCar = new CarManager();
+        }
+
+        public ReservationManager(IHelper helper, IOption objOption, ICategory objCat, IRent objRent, ICar objCar)
+        {
+            _helper = helper;
+            _objOption = objOption;
+            _objCat = objCat;
+            _objRent = objRent;
+            _objCar = objCar;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -25,34 +49,33 @@ namespace URent.Models.Manager
             try
             {
                 var list = new List<Reservation>();
-                var objOption = new OptionManager();
                 var listOption = new List<Option>();
-                var option = objOption.ListOption(1);
+                var option = _objOption.ListOption(1);
                 listOption.Add(option);
                 var reservation = new Reservation { ReservationId = 1, ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 listOption = new List<Option>();
-                option = objOption.ListOption(1);
+                option = _objOption.ListOption(1);
                 listOption.Add(option);
-                option = objOption.ListOption(2);
+                option = _objOption.ListOption(2);
                 listOption.Add(option);
                 reservation = new Reservation { ReservationId = 2, ClientId = 2, CarId = 2, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 listOption = new List<Option>();
-                option = objOption.ListOption(1);
+                option = _objOption.ListOption(1);
                 listOption.Add(option);
-                option = objOption.ListOption(2);
+                option = _objOption.ListOption(2);
                 listOption.Add(option);
                 reservation = new Reservation { ReservationId = 3, ClientId = 2, CarId = 3, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("Reservation", json);
+                _helper.CreateJson("Reservation", json);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -66,7 +89,7 @@ namespace URent.Models.Manager
         private void Generate(List<Reservation> reservations)
         {
             var json = JsonConvert.SerializeObject(reservations);
-            Helper.CreateJson("Reservation", json);
+            _helper.CreateJson("Reservation", json);
         }
 
         /// <summary>
@@ -76,9 +99,9 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des reservations</returns>
         private IList<Reservation> ReadReservation()
         {
-            var list = JsonConvert.DeserializeObject<List<Model.Reservation>>(Helper.ReadJson("Reservation"));
+            var list = JsonConvert.DeserializeObject<List<Reservation>>(_helper.ReadJson("Reservation"));
 
-            return list ?? new List<Model.Reservation>();
+            return list ?? new List<Reservation>();
         }
 
         /// <summary>
@@ -115,10 +138,8 @@ namespace URent.Models.Manager
         /// <returns>Retourne toutes les reservations du client</returns>
         public IList<Model.List.Reservation> ListReservationByClient(int id)
         {
-            var objC = new CarManager();
-            var objCat = new CategoryManager();
-            var listC = objC.ListCars();
-            var listCat = objCat.ListCategories();
+            var listC = _objCar.ListCars();
+            var listCat = _objCat.ListCategories();
             var list = ReadReservation();
 
             var query = from r in list
@@ -152,8 +173,7 @@ namespace URent.Models.Manager
         public IList<Reservation> ListReservationsWithNoRent()
         {
             var listRes = ReadReservation();
-            var objRent = new RentManager();
-            var listRen = objRent.ListRent();
+            var listRen = _objRent.ListRent();
             var table = (from r in listRes
                          where (listRen.Where(re => re.ReservationId == r.ReservationId).Count() <= 0)
                          select r).ToList();
@@ -192,7 +212,7 @@ namespace URent.Models.Manager
                 Generate(list);
                 return reservation;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -226,7 +246,7 @@ namespace URent.Models.Manager
                 CreateUpdate(model);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

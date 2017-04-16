@@ -15,6 +15,18 @@ namespace URent.Models.Manager
     /// </summary>
     public class RentPriceManager : IRentPrice
     {
+        private readonly IHelper _helper;
+
+        public RentPriceManager()
+        {
+            _helper = new Helper();
+        }
+
+        public RentPriceManager(IHelper helper)
+        {
+            _helper = helper;
+        }
+
         /// <summary>
         /// Auteur: Marcos Muranaka
         /// Description: Cette fonction génère un fichier Json avec des données pré-définies
@@ -76,10 +88,10 @@ namespace URent.Models.Manager
                 rent = new RentPrice { RentPriceId = 8, CategoryId = 3, Price = 49, SaleDate = new DateTime(2017, 12, 25) };
                 list.Add(rent);
                 var json = JsonConvert.SerializeObject(list);
-                Helper.CreateJson("RentPrice", json);
+                _helper.CreateJson("RentPrice", json);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -92,7 +104,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne une liste des prix de location</returns>
         private IList<RentPrice> ReadRentPrice()
         {
-            return JsonConvert.DeserializeObject<List<RentPrice>>(Helper.ReadJson("RentPrice"));
+            return JsonConvert.DeserializeObject<List<RentPrice>>(_helper.ReadJson("RentPrice"));
         }
 
         /// <summary>
@@ -108,10 +120,10 @@ namespace URent.Models.Manager
         {
             var list = ReadRentPrice();
             var price = list?.Where(c => c.CategoryId == categoryId && c.SaleDate == date).Select(c => c.Price).ToList();
-            if (price.Count == 0)
+            if (price != null && price.Count != 0) return price.Count > 0 ? price[0] : 0;
             {
                 var day = (int)date.DayOfWeek;
-                price = list?.Where(c => { return c.SaleDay != null && (c.CategoryId == categoryId && (int)c.SaleDay == day); }).Select(c => c.Price).ToList();
+                price = list?.Where(c => c.SaleDay != null && (c.CategoryId == categoryId && (int)c.SaleDay == day)).Select(c => c.Price).ToList();
             }
             return price != null && price.Count > 0 ? price[0] : 0;
         }
@@ -166,14 +178,14 @@ namespace URent.Models.Manager
             {
                 foreach (var o in orderPrice)
                 {
-                    decimal totalCar = 0;
-                    if (o.OrderPrice != null)
-                    {
-                        foreach (var car in o.OrderPrice)
-                        {
-                            totalCar += car.Price;
-                        }
-                    }
+                    //decimal totalCar = 0;
+                    //if (o.OrderPrice != null)
+                    //{
+                    //    foreach (var car in o.OrderPrice)
+                    //    {
+                    //        totalCar += car.Price;
+                    //    }
+                    //}
 
                     decimal totalOption = 0;
                     if (o.Options != null)
@@ -190,62 +202,6 @@ namespace URent.Models.Manager
             }
             return orderPrice;
         }
-
-        //public IList<Model.RentPrice> ListRentPrices()
-        //{
-        //    return ReadRentPrice();
-        //}
-
-        //public IList<Model.RentPrice> ListRentPrice(int id)
-        //{
-        //    var list = ReadRentPrice();
-        //    return list.Where(c => c.RentPriceId == id).ToList();
-        //}
-
-        /// <summary>
-        /// Auteur: Marcos Muranaka
-        /// Description: Cette fonction
-        /// </summary>
-        /// <param name="rent">L'objet du prix à creer ou modifier</param>
-        //public void CreateUpdate(Model.RentPrice rent)
-        //{
-        //    var list = (List<Model.RentPrice>)ReadRentPrice();
-        //    if (rent.RentPriceId > 0)
-        //    {
-        //        //Remove RentPrice to edit
-        //        list.RemoveAll(u => u.RentPriceId == rent.RentPriceId);
-        //    }
-        //    else
-        //    {
-        //        //If new RentPrice, we add the max RentPriceId + 1
-        //        rent.RentPriceId = list.Max(u => u.RentPriceId) + 1;
-        //    }
-        //    list.Add(rent);
-        //    Generate(list);
-        //}
-
-        /// <summary>
-        /// Auteur: Marcos Muranaka
-        /// Description: Cette fonction efface le prix
-        /// </summary>
-        /// <param name="rent"></param>
-        //public void Remove(Model.RentPrice rent)
-        //{
-        //    var list = (List<Model.RentPrice>)ReadRentPrice();
-        //    list.RemoveAll(u => u.RentPriceId == rent.RentPriceId);
-        //    Generate(list);
-        //}
-
-        /// <summary>
-        /// Auteur: Marcos Muranaka
-        /// Description: Cette fonction génère un fichier Json avec des la liste des objets des prix de location
-        /// </summary>
-        /// <param name="rents">Liste des prix de location</param>
-        //private void Generate(List<Model.RentPrice> rents)
-        //{
-        //    var json = JsonConvert.SerializeObject(rents);
-        //    Util.CreateJson("RentPrice", json);
-        //}
 
     }
 }
