@@ -5,6 +5,7 @@ using System.Linq;
 using URent.Models.Util;
 using System;
 using System.Web;
+using System.Text.RegularExpressions;
 
 namespace URent.Models.Manager
 {
@@ -130,6 +131,22 @@ namespace URent.Models.Manager
         {
             try
             {
+                if (client.FirstName == null || client.Surname == null || client.Email == null || client.Password == null)
+                {
+                    client.Error = "All the fields are required";
+                    return false;
+                }
+                if (!Regex.Match(client.Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$").Success)
+                {
+                    client.Error = "Email format incorrect";
+                    return false;
+                }
+
+                if (CheckAvailableEmail(client.ClientId, client.Email))
+                {
+                    client.Error = "Email already exists";
+                    return false;
+                }
                 var list = (List<Model.Client>)ReadClient();
                 if (client.ClientId > 0)
                 {
@@ -166,6 +183,17 @@ namespace URent.Models.Manager
         /// <returns></returns>
         public Model.Client Authentification(Model.Client client)
         {
+            if (client.Password == null || client.Email == null)
+            {
+                client.Error = "All the fields are required";
+                return client;
+            }
+
+            if (!Regex.Match(client.Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$").Success)
+            {
+                client.Error = "Email format incorrect";
+                return client;
+            }
             var list = ReadClient();
             var clientLogin = list.FirstOrDefault(u => u.Email == client.Email && u.Password == client.Password);
             return clientLogin;

@@ -141,6 +141,7 @@ namespace URent.Models.Manager
                 Status = obj.Status
             }).ToList();
 
+            
             return listR;
         }
 

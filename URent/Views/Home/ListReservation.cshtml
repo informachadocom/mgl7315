@@ -35,7 +35,9 @@
                             @if (obj.Status == 1 && obj.DateStartRent > DateTime.Now)
                             {
                                 <button class="btn btn-large btn-primary" data-id="@obj.ReservationId" data-delay="@obj.CancelDelay">Cancel</button>
-                            }
+                                }
+                            <button class="btn btn-large btn-secondary" data-id="" data-delay="">Test</button>
+
                         </td>
                     </tr>
                 }
@@ -64,5 +66,6 @@
                 }
             });
         });
+
     </script>
 }

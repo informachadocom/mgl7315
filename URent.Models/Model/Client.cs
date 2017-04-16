@@ -29,5 +29,8 @@ namespace URent.Models.Model
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [DataType(DataType.Text)]
+        public string Error { get; set; }
+
     }
 }
