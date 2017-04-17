@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Interfaces\ICrypt.cs" />
     <Compile Include="Interfaces\IHelper.cs" />
+    <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Interfaces\ISearch.cs" />
     <Compile Include="Interfaces\IReservation.cs" />
