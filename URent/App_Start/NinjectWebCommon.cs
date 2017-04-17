@@ -64,14 +64,14 @@ namespace URent.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<ICategory>().To<CategoryManager>().Named("Prod");
-            kernel.Bind<IOption>().To<OptionManager>().Named("Prod");
-            kernel.Bind<IClient>().To<ClientManager>().Named("Prod");
-            kernel.Bind<ICar>().To<CarManager>().Named("Prod");
-            kernel.Bind<IReservation>().To<ReservationManager>().Named("Prod");
+            kernel.Bind<ICategoryManager>().To<CategoryManager>().Named("Prod");
+            kernel.Bind<IOptionManager>().To<OptionManager>().Named("Prod");
+            kernel.Bind<IClientManager>().To<ClientManager>().Named("Prod");
+            kernel.Bind<ICarManager>().To<CarManager>().Named("Prod");
+            kernel.Bind<IReservationManager>().To<ReservationManager>().Named("Prod");
             kernel.Bind<ISearch>().To<SearchManager>().Named("Prod");
-            kernel.Bind<IRentPrice>().To<RentPriceManager>().Named("Prod");
-            kernel.Bind<IRent>().To<RentManager>().Named("Prod");
+            kernel.Bind<IRentPriceManager>().To<RentPriceManager>().Named("Prod");
+            kernel.Bind<IRentManager>().To<RentManager>().Named("Prod");
             kernel.Bind<IUser>().To<UserManager>().Named("Prod");
             kernel.Bind<IHelper>().To<Helper>().Named("Prod");
             kernel.Bind<ICrypt>().To<Crypt>().Named("Prod");

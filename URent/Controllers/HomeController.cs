@@ -10,20 +10,20 @@ namespace URent.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ICategory _category;
+        private readonly ICategoryManager _categoryManager;
         private readonly ISearch _search;
-        private readonly IOption _option;
-        private readonly IClient _client;
-        private readonly IRentPrice _price;
-        private readonly IReservation _reservation;
-        public HomeController([Named("Prod")] ICategory category, ISearch search, IOption option, IClient client, IRentPrice price, IReservation reservation)
+        private readonly IOptionManager _optionManager;
+        private readonly IClientManager _clientManager;
+        private readonly IRentPriceManager _priceManager;
+        private readonly IReservationManager _reservationManager;
+        public HomeController([Named("Prod")] ICategoryManager _categoryManager, ISearch search, IOptionManager optionManager, IClientManager _clientManager, IRentPriceManager _priceManager, IReservationManager _reservationManager)
         {
-            _category = category;
+            this._categoryManager = _categoryManager;
             _search = search;
-            _option = option;
-            _client = client;
-            _price = price;
-            _reservation = reservation;
+            _optionManager = optionManager;
+            this._clientManager = _clientManager;
+            this._priceManager = _priceManager;
+            this._reservationManager = _reservationManager;
         }
 
         public ActionResult Index()
@@ -53,7 +53,7 @@ namespace URent.Controllers
                 if (listCategories.Count > 0)
                 {
                     //Get options
-                    var listOptions = _option.ListOptions();
+                    var listOptions = _optionManager.ListOptions();
                     model.ListCategory = listCategories;
                     model.ListOption = listOptions;
                     model.DateDeparture = DateTime.Parse((DateTime.Parse(model.DateDeparture.ToString()).ToShortDateString()));
@@ -103,7 +103,7 @@ namespace URent.Controllers
                     {
                         var listSelectedOptions = ListSelectedOption(model.SelectedOptions);
                         order[0].Options = listSelectedOptions;
-                        order = _price.RecalculatePriceSearch(order) as List<Order>;
+                        order = _priceManager.RecalculatePriceSearch(order) as List<Order>;
                     }
                     if (order != null) Session["order"] = order[0];
                     return RedirectToAction("Summary");
@@ -124,7 +124,7 @@ namespace URent.Controllers
         {
             if (Session["order"] != null)
             {
-                if (!_client.IsAuthenticated())
+                if (!_clientManager.IsAuthenticated())
                 {
                     TempData["Message"] = "To continue you have to login or register a new client.";
                     TempData["Redirect"] = "Summary";
@@ -156,7 +156,7 @@ namespace URent.Controllers
         public ActionResult Reservation(Order model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            if (_client.IsAuthenticated())
+            if (_clientManager.IsAuthenticated())
             {
                 model = (Order)Session["Order"];
                 if (ModelState.IsValid)
@@ -174,7 +174,7 @@ namespace URent.Controllers
                         reserv.DateReturnRent = model.DateReturn;
                         reserv.Options = model.Options;
                         reserv.Status = 1;
-                        var resultReservation = _reservation.CreateUpdate(reserv);
+                        var resultReservation = _reservationManager.CreateUpdate(reserv);
                         if (resultReservation != null && resultReservation.ReservationId > 0)
                         {
                             ViewBag.Reservation = true;
@@ -207,7 +207,7 @@ namespace URent.Controllers
         {
             if (ViewBag.Reservation != null && ViewBag.Reservation == true)
             {
-                if (_client.IsAuthenticated())
+                if (_clientManager.IsAuthenticated())
                 {
                     Session["order"] = null;
                     return View(model);
@@ -225,9 +225,9 @@ namespace URent.Controllers
 
         public ActionResult ListReservation()
         {
-            if (_client.IsAuthenticated())
+            if (_clientManager.IsAuthenticated())
             {
-                var model = _reservation.ListReservationByClient(ClientId);
+                var model = _reservationManager.ListReservationByClient(ClientId);
                 return View(model);
             }
             return RedirectToAction("Login", "Account");
@@ -242,7 +242,7 @@ namespace URent.Controllers
             //if (delay)
             //{
             //On peut canceler la reservation sans frais d'annulation
-            var result = _reservation.Cancel(id);
+            var result = _reservationManager.Cancel(id);
             if (!result)
             {
                 AddErrors("Error in cancelation!");
@@ -258,7 +258,7 @@ namespace URent.Controllers
 
         private IList<Category> ListCategory()
         {
-            return _category.ListCategories();
+            return _categoryManager.ListCategories();
         }
 
         private IList<Option> ListSelectedOption(int[] options)
@@ -266,7 +266,7 @@ namespace URent.Controllers
             var list = new List<Option>();
             foreach (var i in options)
             {
-                var op = _option.ListOption(i);
+                var op = _optionManager.ListOption(i);
                 list.Add(op);
             }
             return list;

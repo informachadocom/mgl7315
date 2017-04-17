@@ -7,9 +7,8 @@ namespace URent.Models.Interfaces
     /// Date: 26/03/2017
     /// Description: Définir l'interface des catégories
     /// </summary>
-    public interface ICategory
+    public interface ICategoryManager : IManager
     {
-        bool Generate();
         IList<Model.Category> ListCategories();
         Model.Category ListCategory(int id);
     }

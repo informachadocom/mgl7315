@@ -13,7 +13,7 @@ namespace URent.Models.Manager
     /// Date: 28/03/2017
     /// Description: Cette classe est responsable de gérer les tarifications de location
     /// </summary>
-    public class RentPriceManager : IRentPrice
+    public class RentPriceManager : IRentPriceManager
     {
         private readonly IHelper _helper;
 

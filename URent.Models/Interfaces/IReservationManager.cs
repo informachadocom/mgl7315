@@ -8,9 +8,8 @@ namespace URent.Models.Interfaces
     /// Date: 29/03/2017
     /// Description: Définir l'interface de reservation
     /// </summary>
-    public interface IReservation
+    public interface IReservationManager : IManager
     {
-        bool Generate();
         IList<Reservation> ListReservations();
         Reservation ListReservation(int id);
         IList<Model.List.Reservation> ListReservationByClient(int id);

@@ -7,9 +7,8 @@ namespace URent.Models.Interfaces
     /// Date: 29/03/2017
     /// Description: Définir l'interface de location
     /// </summary>
-    public interface IRent
+    public interface IRentManager : IManager
     {
-        bool Generate();
         int CreateUpdate(Model.Rent rent);
         IList<Model.Rent> ListRent();
         bool Cancel(int id);

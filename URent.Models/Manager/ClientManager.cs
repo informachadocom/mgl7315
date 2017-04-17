@@ -4,11 +4,8 @@ using URent.Models.Interfaces;
 using System.Linq;
 using System;
 using System.Web;
-<<<<<<< HEAD
 using System.Text.RegularExpressions;
-=======
 using URent.Models.Util;
->>>>>>> origin/master
 
 namespace URent.Models.Manager
 {
@@ -17,7 +14,7 @@ namespace URent.Models.Manager
     /// Date: 26/03/2017
     /// Description: Cette classe est responsable de gérer les usagers
     /// </summary>
-    public class ClientManager : IClient
+    public class ClientManager : IClientManager
     {
         private readonly IHelper _helper;
         private readonly ICrypt _crypt;
@@ -150,7 +147,6 @@ namespace URent.Models.Manager
         {
             try
             {
-<<<<<<< HEAD
                 if (client.FirstName == null || client.Surname == null || client.Email == null || client.Password == null)
                 {
                     client.Error = "All the fields are required";
@@ -167,9 +163,9 @@ namespace URent.Models.Manager
                     client.Error = "Email already exists";
                     return false;
                 }
-=======
+
                 client.Password = _crypt.Encrypt(client.Password, Key);
->>>>>>> origin/master
+
                 var list = (List<Model.Client>)ReadClient();
                 if (client.ClientId > 0)
                 {

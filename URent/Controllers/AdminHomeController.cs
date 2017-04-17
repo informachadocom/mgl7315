@@ -12,25 +12,25 @@ namespace URent.Controllers
     public class AdminHomeController : Controller
     {
         private readonly IUser _user;
-        private readonly IReservation _reservation;
-        private readonly IClient _client;
-        private readonly ICategory _category;
-        private readonly ICar _car;
-        private readonly IOption _option;
-        private readonly IRent _rent;
+        private readonly IReservationManager _reservationManager;
+        private readonly IClientManager _clientManager;
+        private readonly ICategoryManager _categoryManager;
+        private readonly ICarManager _carManager;
+        private readonly IOptionManager _optionManager;
+        private readonly IRentManager _rentManager;
         private readonly ISearch _search;
 
-        public AdminHomeController([Named("Prod")] IUser user, IReservation reservation, IClient client, ICategory category, ICar car, IOption option, IRent rent, ISearch search)
+        public AdminHomeController([Named("Prod")] IUser user, IReservationManager _reservationManager, IClientManager _clientManager, ICategoryManager _categoryManager, ICarManager _carManager, IOptionManager optionManager, IRentManager _rentManager, ISearch search)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
             _user = user;
-            _reservation = reservation;
-            _client = client;
-            _category = category;
-            _car = car;
-            _option = option;
+            this._reservationManager = _reservationManager;
+            this._clientManager = _clientManager;
+            this._categoryManager = _categoryManager;
+            this._carManager = _carManager;
+            _optionManager = optionManager;
             _search = search;
-            _rent = rent;
+            this._rentManager = _rentManager;
         }
 
         // GET: AdminHome
@@ -48,18 +48,18 @@ namespace URent.Controllers
             if (_user.IsAuthenticated())
             {
                 var model = new List<ReservationViewModel>();
-                var list = _reservation.ListReservationsWithNoRent();
+                var list = _reservationManager.ListReservationsWithNoRent();
                 if (list != null && list.Count > 0)
                 {
                     foreach (var r in list)
                     {
                         var obj = new ReservationViewModel();
-                        var resultCar = _car.ListCar(r.CarId);
-                        var resultClient = _client.ListClient(r.ClientId);
+                        var resultCar = _carManager.ListCar(r.CarId);
+                        var resultClient = _clientManager.ListClient(r.ClientId);
                         obj.ReservationId = r.ReservationId;
                         obj.ClientName = $"{resultClient.FirstName} {resultClient.Surname}";
                         obj.Car = resultCar.Name;
-                        obj.Category = _category.ListCategory(resultCar.CategoryId).Name;
+                        obj.Category = _categoryManager.ListCategory(resultCar.CategoryId).Name;
                         obj.Cost = r.Cost;
                         obj.DateReservation = r.DateReservation;
                         obj.DateStartRent = r.DateStartRent;
@@ -80,19 +80,19 @@ namespace URent.Controllers
             if (_user.IsAuthenticated())
             {
                 var model = new List<RentViewModel>();
-                var list = _rent.ListRent();
+                var list = _rentManager.ListRent();
                 if (list != null && list.Count > 0)
                 {
                     foreach (var r in list)
                     {
                         var obj = new RentViewModel();
-                        var resultCar = _car.ListCar(r.CarId);
-                        var resultClient = _client.ListClient(r.ClientId);
+                        var resultCar = _carManager.ListCar(r.CarId);
+                        var resultClient = _clientManager.ListClient(r.ClientId);
                         obj.RentId = r.RentId;
                         obj.ReservationId = r.ReservationId;
                         obj.ClientName = $"{resultClient.FirstName} {resultClient.Surname}";
                         obj.Car = resultCar.Name;
-                        obj.Category = _category.ListCategory(resultCar.CategoryId).Name;
+                        obj.Category = _categoryManager.ListCategory(resultCar.CategoryId).Name;
                         obj.Cost = r.Cost;
                         obj.DateDeparture = r.DateDeparture;
                         obj.DateReturn = r.DateReturn;
@@ -114,9 +114,9 @@ namespace URent.Controllers
 
             string reservationId = Request.QueryString["ReservationId"];
 
-            var list = _reservation.ListReservation(int.Parse(reservationId));
-            var listCategories = _category.ListCategories();
-            var listOptions = _option.ListOptions();
+            var list = _reservationManager.ListReservation(int.Parse(reservationId));
+            var listCategories = _categoryManager.ListCategories();
+            var listOptions = _optionManager.ListOptions();
             var listTime = ListTime();
 
             model.ListCategory = listCategories;
@@ -125,11 +125,11 @@ namespace URent.Controllers
             model.DateReturn = DateTime.Parse((DateTime.Parse(list.DateReturnRent.ToString(CultureInfo.InvariantCulture)).ToShortDateString()));
             model.ListTimeDeparture = listTime;
             model.ListTimeReturn = listTime;
-            model.CategoryId = _car.ListCar(list.CarId).CategoryId;
+            model.CategoryId = _carManager.ListCar(list.CarId).CategoryId;
             model.TimeDeparture = $"{FormatTime(list.DateStartRent.Hour)}:{FormatTime(list.DateStartRent.Minute)}";
             model.TimeReturn = $"{FormatTime(list.DateReturnRent.Hour)}:{FormatTime(list.DateReturnRent.Minute)}";
             model.ReservationId = int.Parse(reservationId);
-            model.ListClient = _client.ListClients();
+            model.ListClient = _clientManager.ListClients();
             model.ClientId = list.ClientId;
             int[] selectedOptions = new int[list.Options.Count];
             var i = 0;
@@ -162,12 +162,12 @@ namespace URent.Controllers
                     rentModel.Options = new List<Option>();
                     foreach (var o in model.SelectedOptions)
                     {
-                        rentModel.Options.Add(_option.ListOption(o));
+                        rentModel.Options.Add(_optionManager.ListOption(o));
                     }
                     rentModel.ReservationId = model.ReservationId;
                     rentModel.UserId = int.Parse(Session["UserId"].ToString());
                     rentModel.Status = 1;
-                    var id = _rent.CreateUpdate(rentModel);
+                    var id = _rentManager.CreateUpdate(rentModel);
                     if (id > 0)
                     {
                         rentModel.RentId = id;
@@ -182,14 +182,14 @@ namespace URent.Controllers
                 {
                     AddErrors("Category is not more available!");
                 }
-                var listCategories = _category.ListCategories();
-                var listOptions = _option.ListOptions();
+                var listCategories = _categoryManager.ListCategories();
+                var listOptions = _optionManager.ListOptions();
                 var listTime = ListTime();
                 model.ListCategory = listCategories;
                 model.ListOption = listOptions;
                 model.ListTimeDeparture = listTime;
                 model.ListTimeReturn = listTime;
-                model.ListClient = _client.ListClients();
+                model.ListClient = _clientManager.ListClients();
                 return View(model);
             }
             else
@@ -202,7 +202,7 @@ namespace URent.Controllers
         [AllowAnonymous]
         public ActionResult Cancel(int id)
         {
-            var result = _rent.Cancel(id);
+            var result = _rentManager.Cancel(id);
             if (!result)
             {
                 AddErrors("Error in cancelation!");

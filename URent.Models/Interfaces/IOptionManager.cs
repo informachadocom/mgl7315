@@ -7,9 +7,8 @@ namespace URent.Models.Interfaces
     /// Date: 26/03/2017
     /// Description: Définir l'interface des options
     /// </summary>
-    public interface IOption
+    public interface IOptionManager : IManager
     {
-        bool Generate();
         IList<Model.Option> ListOptions();
         Model.Option ListOption(int id);
     }

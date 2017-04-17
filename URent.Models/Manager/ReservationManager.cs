@@ -13,30 +13,30 @@ namespace URent.Models.Manager
     /// Date: 28/03/2017
     /// Description: Cette classe est responsable de gérer la reservation
     /// </summary>
-    public class ReservationManager : IReservation
+    public class ReservationManager : IReservationManager
     {
         private readonly IHelper _helper;
-        private readonly IOption _objOption;
-        private readonly ICategory _objCat;
-        private readonly IRent _objRent;
-        private readonly ICar _objCar;
+        private readonly IOptionManager _objOptionManager;
+        private readonly ICategoryManager _objCat;
+        private readonly IRentManager _objRentManager;
+        private readonly ICarManager _objCarManager;
 
         public ReservationManager()
         {
             _helper = new Helper();
-            _objOption = new OptionManager();
+            _objOptionManager = new OptionManager();
             _objCat = new CategoryManager();
-            _objRent = new RentManager();
-            _objCar = new CarManager();
+            _objRentManager = new RentManager();
+            _objCarManager = new CarManager();
         }
 
-        public ReservationManager(IHelper helper, IOption objOption, ICategory objCat, IRent objRent, ICar objCar)
+        public ReservationManager(IHelper helper, IOptionManager objOptionManager, ICategoryManager objCat, IRentManager objRentManager, ICarManager objCarManager)
         {
             _helper = helper;
-            _objOption = objOption;
+            _objOptionManager = objOptionManager;
             _objCat = objCat;
-            _objRent = objRent;
-            _objCar = objCar;
+            _objRentManager = objRentManager;
+            _objCarManager = objCarManager;
         }
 
         /// <summary>
@@ -50,23 +50,23 @@ namespace URent.Models.Manager
             {
                 var list = new List<Reservation>();
                 var listOption = new List<Option>();
-                var option = _objOption.ListOption(1);
+                var option = _objOptionManager.ListOption(1);
                 listOption.Add(option);
                 var reservation = new Reservation { ReservationId = 1, ClientId = 1, CarId = 1, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-03-27"), DateReturnRent = DateTime.Parse("2017-03-28"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 listOption = new List<Option>();
-                option = _objOption.ListOption(1);
+                option = _objOptionManager.ListOption(1);
                 listOption.Add(option);
-                option = _objOption.ListOption(2);
+                option = _objOptionManager.ListOption(2);
                 listOption.Add(option);
                 reservation = new Reservation { ReservationId = 2, ClientId = 2, CarId = 2, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
 
                 listOption = new List<Option>();
-                option = _objOption.ListOption(1);
+                option = _objOptionManager.ListOption(1);
                 listOption.Add(option);
-                option = _objOption.ListOption(2);
+                option = _objOptionManager.ListOption(2);
                 listOption.Add(option);
                 reservation = new Reservation { ReservationId = 3, ClientId = 2, CarId = 3, DateReservation = DateTime.Parse("2017-03-27"), DateStartRent = DateTime.Parse("2017-04-01"), DateReturnRent = DateTime.Parse("2017-04-03"), Cost = 80, Options = listOption, Status = 1 };
                 list.Add(reservation);
@@ -138,7 +138,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne toutes les reservations du client</returns>
         public IList<Model.List.Reservation> ListReservationByClient(int id)
         {
-            var listC = _objCar.ListCars();
+            var listC = _objCarManager.ListCars();
             var listCat = _objCat.ListCategories();
             var list = ReadReservation();
 
@@ -174,7 +174,7 @@ namespace URent.Models.Manager
         public IList<Reservation> ListReservationsWithNoRent()
         {
             var listRes = ReadReservation();
-            var listRen = _objRent.ListRent();
+            var listRen = _objRentManager.ListRent();
             var table = (from r in listRes
                          where (listRen.Where(re => re.ReservationId == r.ReservationId).Count() <= 0)
                          select r).ToList();

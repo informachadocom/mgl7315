@@ -13,24 +13,24 @@ namespace URent.Models.Manager
     /// </summary>
     public class SearchManager : ISearch
     {
-        private readonly IRentPrice _objPrice;
-        private readonly IReservation _objRes;
-        private readonly ICar _objCar;
-        private readonly ICategory _objCat;
+        private readonly IRentPriceManager _objPriceManager;
+        private readonly IReservationManager _objRes;
+        private readonly ICarManager _objCarManager;
+        private readonly ICategoryManager _objCat;
 
         public SearchManager()
         {
-            _objPrice = new RentPriceManager();
+            _objPriceManager = new RentPriceManager();
             _objRes = new ReservationManager();
-            _objCar = new CarManager();
+            _objCarManager = new CarManager();
             _objCat = new CategoryManager();
         }
 
-        public SearchManager(IRentPrice objPrice, IReservation objRes, ICar objCar, ICategory objCat)
+        public SearchManager(IRentPriceManager objPriceManager, IReservationManager objRes, ICarManager objCarManager, ICategoryManager objCat)
         {
-            _objPrice = objPrice;
+            _objPriceManager = objPriceManager;
             _objRes = objRes;
-            _objCar = objCar;
+            _objCarManager = objCarManager;
             _objCat = objCat;
         }
 
@@ -47,7 +47,7 @@ namespace URent.Models.Manager
         {
             //List of categories available
             var listCategoryAvailable = GetCategoryAvailable(dateDeparture, dateReturn, categoryId, reservationId);
-            var listCategoriesPrice = (List<Order>)_objPrice.CalculatePriceSearch(listCategoryAvailable, dateDeparture, dateReturn);
+            var listCategoriesPrice = (List<Order>)_objPriceManager.CalculatePriceSearch(listCategoryAvailable, dateDeparture, dateReturn);
             return listCategoriesPrice;
         }
 
@@ -63,7 +63,7 @@ namespace URent.Models.Manager
         public IList<Category> GetCategoryAvailable(DateTime dateDeparture, DateTime dateReturn, int categoryId, int reservationId = 0)
         {
             var listR = _objRes.ListReservations();
-            var listC = _objCar.ListCars();
+            var listC = _objCarManager.ListCars();
             //Create a temporary table with all necessaries columns
             var table = (from r in listR
                          select
@@ -140,7 +140,7 @@ namespace URent.Models.Manager
         {
             var carId = 0;
             var listR = _objRes.ListReservations();
-            var listC = _objCar.ListCars();
+            var listC = _objCarManager.ListCars();
             //Create a temporary table with all necessaries columns
             var table = (from r in listR
                          select
@@ -200,7 +200,7 @@ namespace URent.Models.Manager
         /// <returns>Retourne la quantité de véhicules</returns>
         private int GetCountCars(int categoryId)
         {
-            var list = _objCar.ListCarsByCategory(categoryId);
+            var list = _objCarManager.ListCarsByCategory(categoryId);
             return list.Count();
         }
     }

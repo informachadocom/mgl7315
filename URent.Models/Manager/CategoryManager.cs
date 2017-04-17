@@ -12,7 +12,7 @@ namespace URent.Models.Manager
     /// Date: 26/03/2017
     /// Description: Cette classe est responsable de gérer les catégories des véhicules
     /// </summary>
-    public class CategoryManager : ICategory
+    public class CategoryManager : ICategoryManager
     {
         private readonly IHelper _helper;
 

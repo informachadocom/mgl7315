@@ -12,7 +12,7 @@ namespace URent.Models.Manager
     /// Date: 29/03/2017
     /// Description: Cette classe est responsable de gérer les voitures
     /// </summary>
-    public class CarManager : ICar
+    public class CarManager : ICarManager
     {
         private readonly IHelper _helper;
 

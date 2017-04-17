@@ -6,31 +6,31 @@ namespace URent.Controllers
 {
     public class ConfigurationController : Controller
     {
-        private readonly IClient _client;
-        private readonly ICar _car;
-        private readonly ICategory _category;
-        private readonly IOption _option;
-        private readonly IReservation _reservation;
-        private readonly IRentPrice _price;
-        public ConfigurationController([Named("Prod")] IClient client, ICar car, ICategory category, IOption option, IReservation reservation, IRentPrice price)
+        private readonly IClientManager _clientManager;
+        private readonly ICarManager _carManager;
+        private readonly ICategoryManager _categoryManager;
+        private readonly IOptionManager _optionManager;
+        private readonly IReservationManager _reservationManager;
+        private readonly IRentPriceManager _priceManager;
+        public ConfigurationController([Named("Prod")] IClientManager _clientManager, ICarManager _carManager, ICategoryManager _categoryManager, IOptionManager optionManager, IReservationManager _reservationManager, IRentPriceManager _priceManager)
         {
-            _client = client;
-            _car = car;
-            _category = category;
-            _option = option;
-            _reservation = reservation;
-            _price = price;
+            this._clientManager = _clientManager;
+            this._carManager = _carManager;
+            this._categoryManager = _categoryManager;
+            _optionManager = optionManager;
+            this._reservationManager = _reservationManager;
+            this._priceManager = _priceManager;
         }
 
 
         public ActionResult GenerateData()
         {
-            _category.Generate();
-            _car.Generate();
-            _client.Generate();
-            _option.Generate();
-            _price.Generate();
-            _reservation.Generate();
+            _categoryManager.Generate();
+            _carManager.Generate();
+            _clientManager.Generate();
+            _optionManager.Generate();
+            _priceManager.Generate();
+            _reservationManager.Generate();
             ViewBag.Message = "Data generated!";
             return View();
         }

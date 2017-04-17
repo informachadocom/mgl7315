@@ -7,9 +7,8 @@ namespace URent.Models.Interfaces
     /// Date: 29/03/2017
     /// Description: Définir l'interface des voitures
     /// </summary>
-    public interface ICar
+    public interface ICarManager : IManager
     {
-        bool Generate();
         IList<Model.Car> ListCars();
         Model.Car ListCar(int id);
         IList<Model.Car> ListCarsByCategory(int id);

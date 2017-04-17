@@ -11,7 +11,7 @@ namespace URent.Models.Manager
     /// Date: 26/03/2017
     /// Description: Cette classe est responsable de gérer les options des véhicules
     /// </summary>
-    public class OptionManager : IOption
+    public class OptionManager : IOptionManager
     {
         private readonly IHelper _helper;
 

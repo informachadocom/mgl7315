@@ -12,21 +12,21 @@ namespace URent.Models.Manager
     /// Date: 28/03/2017
     /// Description: Cette classe est responsable de gérer la location
     /// </summary>
-    public class RentManager : IRent
+    public class RentManager : IRentManager
     {
         private readonly IHelper _helper;
-        private readonly IOption _objOption;
+        private readonly IOptionManager _objOptionManager;
 
         public RentManager()
         {
             _helper = new Helper();
-            _objOption = new OptionManager();
+            _objOptionManager = new OptionManager();
         }
 
-        public RentManager(IHelper helper, IOption option)
+        public RentManager(IHelper helper, IOptionManager optionManager)
         {
             _helper = helper;
-            _objOption = option;
+            _objOptionManager = optionManager;
         }
 
         /// <summary>
@@ -40,15 +40,15 @@ namespace URent.Models.Manager
             {
                 var list = new List<Model.Rent>();
                 var listOption = new List<Model.Option>();
-                var option = _objOption.ListOption(1);
+                var option = _objOptionManager.ListOption(1);
                 listOption.Add(option);
                 var rent = new Model.Rent { RentId = 1, ReservationId = 1, ClientId = 1, CarId = 1, DateDeparture = DateTime.Parse("2017-03-27"), DateReturn = DateTime.Parse("2017-03-29"), Cost = 80, Options = listOption, Status = 1};
                 list.Add(rent);
 
                 listOption = new List<Model.Option>();
-                option = _objOption.ListOption(1);
+                option = _objOptionManager.ListOption(1);
                 listOption.Add(option);
-                option = _objOption.ListOption(2);
+                option = _objOptionManager.ListOption(2);
                 listOption.Add(option);
                 rent = new Model.Rent { RentId = 2, ReservationId = 1, ClientId = 2, CarId = 2, DateDeparture = DateTime.Parse("2017-04-01"), DateReturn = DateTime.Parse("2017-04-03"), Cost = 90, Options = listOption, Status = 1 };
                 list.Add(rent);
