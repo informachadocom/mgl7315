@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace URent.Models.Model
 {
@@ -29,7 +30,7 @@ namespace URent.Models.Model
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [DataType(DataType.Text)]
+        [JsonIgnore]
         public string Error { get; set; }
 
     }
